@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="示例代码皆为伪代码，仅供理解 Angular 概念更多，有时候有很大的理解负担    Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种">
+<meta name="description" content="示例代码皆为伪代码，仅供理解   Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种，是带模版的指令，除了组件外，指令还有结构型指令和功">
 <meta name="keywords" content="Angular">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Angular-React比较">
 <meta property="og:url" content="http://yoursite.com/2018/05/26/Angular-React比较/index.html">
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
-<meta property="og:description" content="示例代码皆为伪代码，仅供理解 Angular 概念更多，有时候有很大的理解负担    Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种">
+<meta property="og:description" content="示例代码皆为伪代码，仅供理解   Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种，是带模版的指令，除了组件外，指令还有结构型指令和功">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-14T10:20:30.115Z">
+<meta property="og:updated_time" content="2018-08-15T05:26:10.080Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Angular-React比较">
-<meta name="twitter:description" content="示例代码皆为伪代码，仅供理解 Angular 概念更多，有时候有很大的理解负担    Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种">
+<meta name="twitter:description" content="示例代码皆为伪代码，仅供理解   Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种，是带模版的指令，除了组件外，指令还有结构型指令和功">
 
 
 
@@ -312,8 +312,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-14T18:20:30+08:00">
-                2018-08-14
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T13:26:10+08:00">
+                2018-08-15
               </time>
             
           </span>
@@ -340,7 +340,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  954
+                  979
                 </span>
               
 
@@ -380,7 +380,6 @@
         <blockquote>
 <ul>
 <li>示例代码皆为伪代码，仅供理解</li>
-<li>Angular 概念更多，有时候有很大的理解负担 </li>
 </ul>
 </blockquote>
 <h3 id="Angular"><a href="#Angular" class="headerlink" title="Angular"></a>Angular</h3><blockquote>
@@ -402,15 +401,13 @@
 <p>组件化、函数式编程、虚拟dom</p>
 </blockquote>
 <ol>
-<li><p>React 通过props从上往下，数据单向流动，通过state保存当前组件内部的状态，通过setState改变组件内部状态</p>
+<li><p>React 维护一颗组件树， 数据通过props从上往下单向流动，组件内部通过state保存状态，通过setState改变state的值，默认当props或state发生变化，组件重新渲染，PureReactComponent组件默认判断新旧props,state（浅引用判断）值，如果没有变化，不重新渲染，但过多diff操作同样消耗性能， 普通Component 可通过使用 shouldComponentUpdate生命周期钩子，返回true|false 来决定是否重新渲染组件，二者结合 immutable 对象性能更佳</p>
 </li>
-<li><p>React 组件有3种创建方式， 尽量使用函数式无状态组件，系统会有更好的性能，如果需要用到state 、生命周期函数，则使用ES6方式，extend Component 创建组件, ES5方式现已不推荐使用</p>
-</li>
-<li><p>PureReactComponent组件 默认判断 新旧 props,state（浅引用判断），减少重复渲染，但过多的diff同样消耗性能， 也可通过使用 shouldComponentUpdate生命周期钩子，返回true|false 来决定是否重新渲染组件， 结合 immutable 对象可以更好地去做更新判断</p>
+<li><p>React 组件有3种创建方式（函数式、ES6、ES5），函数式无状态组件拥有更好的性能，但如果需要用到state 、组件生命周期，则需要使用ES6方式, 通过ES5语法创建现已不推荐使用</p>
 </li>
 </ol>
 <h3 id="二者差异"><a href="#二者差异" class="headerlink" title="二者差异"></a>二者差异</h3><ol>
-<li><p>数据流向： Angular 数据从上往下，单向流动，通过Output注册事件从下往上 ， React 通过props从上往下，数据单向流动，通过state保存当前组件内部的状态，通过setState改变组件内部状态</p>
+<li><p>数据流向： Angular 数据从上往下，单向流动，通过Output自定义事件与父组件通信 ， React 通过props从上往下，数据单向流动，通过state保存当前组件内部的状态，通过setState改变组件内部状态，与父组件通信通常通过状态提升来完成，或使用redux</p>
 </li>
 <li><p>不可变性： @Input 、props 传递的数据都是不可变的（Angular官方文档并没有明确提示，但我从来没这么写过，就算可以也不建议，如果一定要对@Input传递的数据进行处理，可以用set去实现）</p>
 </li>
@@ -427,7 +424,7 @@
 </li>
 </ol>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">React : </span><br><span class="line">    &lt;div ref=&#123;domRef&#125;&gt; <span class="comment">// 通过this.domRef获取dom节点</span></span><br><span class="line"></span><br><span class="line">Angular : </span><br><span class="line">    .ts:</span><br><span class="line">        ViewChild(selector) domRef</span><br><span class="line">    .html:</span><br><span class="line">        &lt;div seletor&gt;</span><br></pre></td></tr></table></figure>
-
+<!-- > - Angular 概念更多，有时候有很大的理解负担  -->
       
     </div>
     
@@ -466,10 +463,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/15/olap与开源分析系统saiku/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -550,7 +543,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
