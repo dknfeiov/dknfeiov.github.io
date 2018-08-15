@@ -187,36 +187,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            标签
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
@@ -279,6 +249,171 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/15/olap与开源分析系统saiku/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="何润斌">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HeRunBin's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/15/olap与开源分析系统saiku/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-15T10:38:04+08:00">
+                2018-08-15
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T10:39:53+08:00">
+                2018-08-15
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  26
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>联机实时分析技术(OLAP)是快速响应多维分(Multidimensionalanalysis, MDA)的一种解决方案。</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -552,8 +687,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-13T10:42:53+08:00">
-                2018-08-13
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T10:29:02+08:00">
+                2018-08-15
               </time>
             
           </span>
@@ -730,8 +865,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-13T10:42:53+08:00">
-                2018-08-13
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T10:30:33+08:00">
+                2018-08-15
               </time>
             
           </span>
@@ -801,15 +936,22 @@
 <p>以下只是个人使用过程中的的一些感受,具体二者之间的差别参考 <a href="https://angular.cn/guide/ajs-quick-reference" target="_blank" rel="noopener">官方文档</a> </p>
 </blockquote>
 <ol>
-<li>Typescript es6超集 , 支持 import export , 不需额外引入模块加载器</li>
-<li>将组件和指令二者剥离开来，前者组成页面，后者分为结构性指令和功能性指令，不再支持replace等</li>
-<li>移除controller, $scope等</li>
-<li>provider，service,factory 统一为 service, 减少理解上的困惑</li>
-<li>angularJs 只有一个注入器，所有服务都是单例，Angular的注入器则是一个树状结构，可以为一个注入对象实现不同的实例（在不同的注入器上）</li>
-<li>controller &lt;=&gt; component 一定意义上等价，都封装了model实体模型，指定html模板,业务逻辑，也都挂靠在模块上</li>
-<li>在setTimeout等异步执行环境中不再需要手动调用$scope.$apply() , angular的代码都运行在 zone中，通过为异步方法打补丁的方式，在方法执行完后自动的执行数据检查，如果使用第三方类库，存在异步操作，想要纳入Angular管理，可以通过以下方式实现<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.ngZone.run(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">this</span>.service.uploadEvent.emit(data);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<li><p>Typescript es6超集 , 支持 import export , 不需额外引入模块加载器</p>
+</li>
+<li><p>将组件和指令二者剥离开来，前者组成页面，后者分为结构性指令和功能性指令，不再支持replace等</p>
+</li>
+<li><p>移除controller, $scope等</p>
+</li>
+<li><p>provider，service,factory 统一为 service, 减少理解上的困惑</p>
+</li>
+<li><p>angularJs 只有一个注入器，所有服务都是单例，Angular的注入器则是一个树状结构，可以为一个注入对象实现不同的实例（在不同的注入器上）</p>
+</li>
+<li><p>controller &lt;=&gt; component 一定意义上等价，都封装了model实体模型，指定html模板,业务逻辑，也都挂靠在模块上</p>
+</li>
+<li><p>在setTimeout等异步执行环境中不再需要手动调用$scope.$apply() , angular的代码都运行在 zone中，通过为异步方法打补丁的方式，在方法执行完后自动的执行数据检查，如果使用第三方类库，存在异步操作，<br>想要纳入Angular管理，可以通过以下方式实现</p>
 </li>
 </ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.ngZone.run(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">this</span>.service.uploadEvent.emit(data);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
           
         
@@ -895,7 +1037,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -908,7 +1050,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
