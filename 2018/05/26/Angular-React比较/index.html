@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
 <meta property="og:description" content="示例代码皆为伪代码，仅供理解   Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种，是带模版的指令，除了组件外，指令还有结构型指令和功">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-15T05:26:10.080Z">
+<meta property="og:updated_time" content="2018-08-24T10:55:56.114Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Angular-React比较">
 <meta name="twitter:description" content="示例代码皆为伪代码，仅供理解   Angular 模块化、组件化、依赖注入、脏检查   Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目  组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种，是带模版的指令，除了组件外，指令还有结构型指令和功">
@@ -312,8 +312,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T13:26:10+08:00">
-                2018-08-15
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-24T18:55:56+08:00">
+                2018-08-24
               </time>
             
           </span>
@@ -340,7 +340,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  979
+                  1,190
                 </span>
               
 
@@ -401,9 +401,13 @@
 <p>组件化、函数式编程、虚拟dom</p>
 </blockquote>
 <ol>
-<li><p>React 维护一颗组件树， 数据通过props从上往下单向流动，组件内部通过state保存状态，通过setState改变state的值，默认当props或state发生变化，组件重新渲染，PureReactComponent组件默认判断新旧props,state（浅引用判断）值，如果没有变化，不重新渲染，但过多diff操作同样消耗性能， 普通Component 可通过使用 shouldComponentUpdate生命周期钩子，返回true|false 来决定是否重新渲染组件，二者结合 immutable 对象性能更佳</p>
+<li><p>React 维护一颗组件树， 数据通过props从上往下单向流动，组件内部通过state保存状态，通过setState改变state的值，默认当props或state发生变化，组件重新渲染，PureReactComponent组件默认判断新旧props,state（浅引用判断）值，如果没有变化，不重新渲染，但过多diff操作同样消耗性能， 普通Component 可通过使用 shouldComponentUpdate生命周期钩子，返回true|false 来决定是否重新渲染组件，结合 immutable 对象可以更好的对性能进行优化</p>
 </li>
-<li><p>React 组件有3种创建方式（函数式、ES6、ES5），函数式无状态组件拥有更好的性能，但如果需要用到state 、组件生命周期，则需要使用ES6方式, 通过ES5语法创建现已不推荐使用</p>
+<li><p>React 组件有3种创建方式（函数式、ES6、ES5），函数式无状态组件拥有更好的性能,每次重新渲染相当于重新执行一次函数,但如果需要用到state 、组件生命周期，则需要使用ES6方式, 通过ES5语法创建现已不推荐使用, </p>
+</li>
+<li><p>jsx-函数式编程，可以用js来构建视图，可以使用临时变量、自带的流程控制、js当前作用域等，相比较于Angular的模板（Template）更为灵活</p>
+</li>
+<li><p>react利用key来识别组件，它是一种身份标识标识，当key发生变化，销毁原有组件，创建新组件，key没有变化，数据变化，重新渲染原组件</p>
 </li>
 </ol>
 <h3 id="二者差异"><a href="#二者差异" class="headerlink" title="二者差异"></a>二者差异</h3><ol>
@@ -424,7 +428,11 @@
 </li>
 </ol>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">React : </span><br><span class="line">    &lt;div ref=&#123;domRef&#125;&gt; <span class="comment">// 通过this.domRef获取dom节点</span></span><br><span class="line"></span><br><span class="line">Angular : </span><br><span class="line">    .ts:</span><br><span class="line">        ViewChild(selector) domRef</span><br><span class="line">    .html:</span><br><span class="line">        &lt;div seletor&gt;</span><br></pre></td></tr></table></figure>
-<!-- > - Angular 概念更多，有时候有很大的理解负担  -->
+<ol start="8">
+<li>Angular 相对React ，概念更多，给出了一个更复杂的解决方案，但同时，Angular提供了React没有的模块化、提供成体系的前端技术解决方案、引入typescript进行类型定义，对于大型协作项目的团队式开发和长期维护，是一个不错的选择</li>
+</ol>
+<!-- angular 每个component ， service， directive 都有自己的一个标识，很容易通过全局查找，知道在何处被使用 -->
+
       
     </div>
     
@@ -639,7 +647,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">1.9k</span>
+    <span title="Site words total count">2.1k</span>
   
 </div>
 
