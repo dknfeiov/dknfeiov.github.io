@@ -263,6 +263,374 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/30/DvaJS实现model复用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="何润斌">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HeRunBin's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/30/DvaJS实现model复用/" itemprop="url">DvaJS model复用的方案</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T19:19:20+08:00">
+                2018-08-30
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:22:13+08:00">
+                2018-08-31
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  427
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  2
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）"><a href="#Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）" class="headerlink" title="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）"></a><a href="https://dvajs.com/guide/getting-started.html#%E5%AE%9A%E4%B9%89-model" target="_blank" rel="noopener">Dva</a> 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）</h3><pre><code>前置知识: dva  =&gt;  一个基于 redux 和 redux-saga 的数据流方案
+         react =&gt; 高阶组件的定义
+</code></pre><h4 id="1-示例描述："><a href="#1-示例描述：" class="headerlink" title="1. 示例描述："></a>1. 示例描述：</h4><pre><code>多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用
+</code></pre><h4 id="2-示例代码："><a href="#2-示例代码：" class="headerlink" title="2. 示例代码："></a>2. 示例代码：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// router.js  </span></span><br><span class="line"><span class="comment">// 1. 动态加载 model 和 路由组件</span></span><br><span class="line">&#123;</span><br><span class="line">    path: <span class="string">'product'</span>,</span><br><span class="line">    getComponent(nextState, cb) &#123;</span><br><span class="line">        <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</span><br><span class="line">            <span class="comment">// 从location 中获取业务类型 type</span></span><br><span class="line">            <span class="keyword">const</span> type = nextState.location.query.type</span><br><span class="line">            <span class="comment">// 加载model并挂载到dva实例上  注意：require后接了()，因为返回的是一个函数，函数执行返回真正将被挂载的model对象</span></span><br><span class="line">            app.model(<span class="built_in">require</span>(<span class="string">'./models/product'</span>)(type))</span><br><span class="line">            <span class="comment">// 加载路由组件  require 返回的也是一个函数，函数执行返回一个React组件（高阶组件，在真正的路由组件上包了一层）</span></span><br><span class="line">            cb(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./routes/product'</span>)(type))</span><br><span class="line">        &#125;, <span class="string">'product'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// models/product.js  </span></span><br><span class="line"><span class="comment">// 2. 根据type 动态生成 model</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">modelGenerate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        namespace: <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span>,</span><br><span class="line">        state: &#123;</span><br><span class="line">            list: []</span><br><span class="line">        &#125;,</span><br><span class="line">        reducers: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        effects: &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// routes/product.jsx  </span></span><br><span class="line"><span class="comment">// 3. 根据type 动态返回 新的React组件（对业务组件进行包装）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">routeGenarate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据type找到命名空间</span></span><br><span class="line">    <span class="keyword">const</span> namespace = <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ProductWrapper</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">            render() &#123;</span><br><span class="line">                <span class="keyword">return</span> &lt;Products &#123;...this.props&#125; /&gt;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 根据 namespace(命名空间) 从redux store 获取对应的model实例数据 ，并命名为 productModel</span><br><span class="line">    return connect(store =&gt; (&#123; productModel: store[namespace] &#125;))(ProductWrapper())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 业务组件 从 props.productModel 获取数据</span><br><span class="line">const Products = (&#123; dispatch, productModel &#125;) =&gt; &#123;</span><br><span class="line">    return (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ProductList list=&#123;productModel.list&#125; /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/30/Generator与async,await/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="何润斌">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HeRunBin's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/30/Generator与async,await/" itemprop="url">Generator与async、await[借鉴自MDN]</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T19:19:20+08:00">
+                2018-08-30
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:30:35+08:00">
+                2018-08-31
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,125
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="一-ES6-Generator-生成器-语法"><a href="#一-ES6-Generator-生成器-语法" class="headerlink" title="一. ES6 Generator(生成器) 语法"></a>一. ES6 Generator(生成器) 语法</h3><pre><code>function* 用于定义一个生成器函数（generator function），它返回一个Generator对象, Generator对象被创建后，通过调用next()方法获取值
+
+yield 关键字用来暂停和恢复一个生成器函数 
+</code></pre><ol>
+<li><p>yield关键字使生成器函数执行暂停，yield关键字后面的表达式的值返回给生成器的调用者。它可以被认为是一个基于生成器的版本的return关键字</p>
+</li>
+<li><p>yield关键字实际返回一个IteratorResult对象，它有两个属性，value和done。value属性是对yield表达式求值的结果，而done是false，表示生成器函数尚未完全完成。</p>
+</li>
+<li><p>一旦遇到 yield 表达式，生成器的代码将被暂停运行，直到生成器的 next() 方法被调用。每次调用生成器的next()方法时，生成器都会恢复执行，直到达到以下某个值:</p>
+<ul>
+<li><p>yield，导致生成器再次暂停并返回生成器的新值。 下一次调用next()时，在yield之后紧接着的语句继续执行。</p>
+</li>
+<li><p>throw用于从生成器中抛出异常。这让生成器完全停止执行，并在调用者中继续执行，正如通常情况下抛出异常一样。</p>
+</li>
+<li><p>到达生成器函数的结尾；在这种情况下，生成器的执行结束，并且IteratorResult给调用者返回undefined并且done为true。</p>
+</li>
+<li><p>到达return 语句。在这种情况下，生成器的执行结束，并将IteratorResult返回给调用者，其值是由return语句指定的，并且done 为true。</p>
+</li>
+</ul>
+</li>
+</ol>
+<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例：</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">countAppleSales</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> saleList = [<span class="number">3</span>, <span class="number">7</span>, <span class="number">5</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; saleList.length; i++) &#123;</span><br><span class="line">        <span class="keyword">yield</span> saleList[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> appleStore = countAppleSales(); <span class="comment">// Generator &#123; &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 3, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 7, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 5, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: undefined, done: true &#125;</span></span><br></pre></td></tr></table></figure>
+
+##### 注意： 
+    1. 不能在forEach等方法中直接使用yield，因为forEach等接受一个函数作为参数，yield外层执行环境不是生成器函数，所以会报语法错误，错误示例如下
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">nameGenerator</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    [<span class="string">'Hellon'</span>,<span class="string">'Nancy'</span>].forEach(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">yield</span> item  <span class="comment">// =&gt; Uncaught SyntaxError: Unexpected identifier</span></span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    2. 也可作为对象属性存在，通过如下方式定义
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*countAppleSales() &#123;&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><ol start="3">
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield*" target="_blank" rel="noopener">yield*</a> 表达式用于委托给另一个generator 或可迭代对象。</li>
+</ol>
+<h3 id="二-Async-function："><a href="#二-Async-function：" class="headerlink" title="二. Async function："></a>二. Async function：</h3><ol>
+<li><p>async function 声明将定义一个返回 AsyncFunction 对象的异步函数。异步函数是指通过事件循环异步执行的函数，它会通过一个隐式的 Promise 返回其结果。但是如果你的代码使用了异步函数，它的语法和结构会更像是标准的同步函数</p>
+<p> 1). 当调用一个 async 函数时，会返回一个 Promise 对象。当这个 async 函数返回一个值时，Promise 的 resolve 方法会负责传递这个值；当 async 函数抛出异常时，Promise 的 reject 方法也会传递这个异常值。<br> 2). async 函数中可能会有 await 表达式，这会使 async 函数暂停执行，等待表达式中的 Promise 解析完成后继续执行 async 函数并返回解决结果</p>
+</li>
+<li><p>await  操作符用于等待一个Promise 对象。它只能在异步函数 async function 中使用<br> 1). await 表达式会暂停当前 async function 的执行，等待 Promise 处理完成。若 Promise 正常处理(fulfilled)，其回调的resolve函数参数作为 await 表达式的值，继续执行 async function。<br> 2). 若 Promise 处理异常(rejected)，await 表达式会把 Promise 的异常原因抛出。<br> 3). 另外，如果 await 操作符后的表达式的值不是一个 Promise，那么该值将被转换为一个已正常处理的 Promise。</p>
+</li>
+</ol>
+<h3 id="三-Generator-结合-async-await"><a href="#三-Generator-结合-async-await" class="headerlink" title="三. Generator 结合 async/await"></a>三. Generator 结合 async/await</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟发起请求，获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getData</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">        data = <span class="string">`MOCK DATA <span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;</span>`</span></span><br><span class="line">        setTimeout(<span class="function"><span class="params">_</span> =&gt;</span> &#123;</span><br><span class="line">            resolve(data)</span><br><span class="line">        &#125;, <span class="number">2000</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 迭代器，调用next()请求最新数据</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span>* <span class="title">timerGenerator</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">yield</span> getData()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 业务代码，获取最新数据</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">execute</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> timer = timerGenerator()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:51 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:53 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:55 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:57 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">&#125;</span><br><span class="line">execute()</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/26/Angular-React比较/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -310,8 +678,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-24T18:55:56+08:00">
-                2018-08-24
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:19:35+08:00">
+                2018-08-31
               </time>
             
           </span>
@@ -377,12 +745,8 @@
       
         
           
-            <blockquote>
-<ul>
-<li>示例代码皆为伪代码，仅供理解</li>
-</ul>
-</blockquote>
-<h3 id="Angular"><a href="#Angular" class="headerlink" title="Angular"></a>Angular</h3><blockquote>
+            <pre><code>示例代码皆为伪代码，仅供理解
+</code></pre><h3 id="Angular"><a href="#Angular" class="headerlink" title="Angular"></a>Angular</h3><blockquote>
 <p>模块化、组件化、依赖注入、脏检查</p>
 </blockquote>
 <ol>
@@ -705,8 +1069,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T14:34:45+08:00">
-                2018-08-15
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:22:13+08:00">
+                2018-08-31
               </time>
             
           </span>
@@ -776,9 +1140,9 @@
 <p>以下只是个人使用过程中的的一些感受,具体二者之间的差别参考 <a href="https://angular.cn/guide/ajs-quick-reference" target="_blank" rel="noopener">官方文档</a> </p>
 </blockquote>
 <ol>
-<li><p>Typescript es6超集 , 支持 import export , 不需额外引入模块加载器</p>
+<li><p>Typescript es6超集 , 支持 import export ,不需额外引入模块加载器</p>
 </li>
-<li><p>将组件和指令二者剥离开来，前者组成页面，后者分为结构性指令和功能性指令，不再支持replace等</p>
+<li><p>将组件和指令二者剥离开来，前者组成页面，后者分为结构性指令和功能性指令, 不再支持replace等</p>
 </li>
 <li><p>移除controller, $scope等</p>
 </li>
@@ -877,7 +1241,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -890,7 +1254,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -957,7 +1321,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">2.1k</span>
+    <span title="Site words total count">3.7k</span>
   
 </div>
 
