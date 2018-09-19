@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="React, DvaJS," />
+  <meta name="keywords" content="HTTP," />
 
 
 
@@ -79,18 +79,22 @@
 
 
 
-<meta name="description" content="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）前置知识: dva  =&amp;gt;  一个基于 redux 和 redux-saga 的数据流方案          react =&amp;gt; 高阶组件的定义 1. 示例描述：多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用 2. 示例代码：123456789101112131">
-<meta name="keywords" content="React, DvaJS">
+<meta name="description" content="一.概述门户入口，通过iframe集成其他内部项目，希望当用户打开项目(不管是门户或者iframe页)时，上报如下指标：当前时间、访问Url、项目、页面加载耗时、超时资源等  主要目的是： 1. 希望实现网络故障或繁忙时，自动预警 2. 有针对性的优化用户访问速度，找到用户访问慢的根源 3. 根据用户上报信息，对访问时段、访问频次、项目打开频次等数据做进一步的探索 二.大致步骤1. 通过PerFo">
+<meta name="keywords" content="HTTP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DvaJS model复用的方案">
-<meta property="og:url" content="http://yoursite.com/2018/08/30/DvaJS实现model复用/index.html">
+<meta property="og:title" content="前端性能监控">
+<meta property="og:url" content="http://yoursite.com/2018/09/19/前端性能监控/index.html">
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
-<meta property="og:description" content="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）前置知识: dva  =&amp;gt;  一个基于 redux 和 redux-saga 的数据流方案          react =&amp;gt; 高阶组件的定义 1. 示例描述：多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用 2. 示例代码：123456789101112131">
+<meta property="og:description" content="一.概述门户入口，通过iframe集成其他内部项目，希望当用户打开项目(不管是门户或者iframe页)时，上报如下指标：当前时间、访问Url、项目、页面加载耗时、超时资源等  主要目的是： 1. 希望实现网络故障或繁忙时，自动预警 2. 有针对性的优化用户访问速度，找到用户访问慢的根源 3. 根据用户上报信息，对访问时段、访问频次、项目打开频次等数据做进一步的探索 二.大致步骤1. 通过PerFo">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-31T11:22:13.189Z">
+<meta property="og:image" content="https://dknfeiov.github.io/images/files/performance/performance.gif">
+<meta property="og:image" content="https://dknfeiov.github.io/images/files/performance/load.gif">
+<meta property="og:image" content="https://dknfeiov.github.io/images/files/performance/resource.gif">
+<meta property="og:updated_time" content="2018-09-19T09:00:03.141Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DvaJS model复用的方案">
-<meta name="twitter:description" content="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）前置知识: dva  =&amp;gt;  一个基于 redux 和 redux-saga 的数据流方案          react =&amp;gt; 高阶组件的定义 1. 示例描述：多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用 2. 示例代码：123456789101112131">
+<meta name="twitter:title" content="前端性能监控">
+<meta name="twitter:description" content="一.概述门户入口，通过iframe集成其他内部项目，希望当用户打开项目(不管是门户或者iframe页)时，上报如下指标：当前时间、访问Url、项目、页面加载耗时、超时资源等  主要目的是： 1. 希望实现网络故障或繁忙时，自动预警 2. 有针对性的优化用户访问速度，找到用户访问慢的根源 3. 根据用户上报信息，对访问时段、访问频次、项目打开频次等数据做进一步的探索 二.大致步骤1. 通过PerFo">
+<meta name="twitter:image" content="https://dknfeiov.github.io/images/files/performance/performance.gif">
 
 
 
@@ -120,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/30/DvaJS实现model复用/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/19/前端性能监控/"/>
 
 
 
 
 
-  <title>DvaJS model复用的方案 | HeRunBin's blog</title>
+  <title>前端性能监控 | HeRunBin's blog</title>
   
 
 
@@ -267,7 +271,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/30/DvaJS实现model复用/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/前端性能监控/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="何润斌">
@@ -284,7 +288,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">DvaJS model复用的方案</h1>
+          <h1 class="post-title" itemprop="name headline">前端性能监控</h1>
         
 
         <div class="post-meta">
@@ -296,8 +300,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T19:19:20+08:00">
-                2018-08-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-19T18:21:58+08:00">
+                2018-09-19
               </time>
             
 
@@ -312,8 +316,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:22:13+08:00">
-                2018-08-31
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T17:00:03+08:00">
+                2018-09-19
               </time>
             
           </span>
@@ -340,7 +344,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  427
+                  851
                 </span>
               
 
@@ -356,7 +360,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  4
                 </span>
               
             </div>
@@ -377,10 +381,27 @@
       
 
       
-        <h3 id="Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）"><a href="#Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）" class="headerlink" title="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）"></a><a href="https://dvajs.com/guide/getting-started.html#%E5%AE%9A%E4%B9%89-model" target="_blank" rel="noopener">Dva</a> 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）</h3><pre><code>前置知识: dva  =&gt;  一个基于 redux 和 redux-saga 的数据流方案
-         react =&gt; 高阶组件的定义
-</code></pre><h4 id="1-示例描述："><a href="#1-示例描述：" class="headerlink" title="1. 示例描述："></a>1. 示例描述：</h4><pre><code>多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用
-</code></pre><h4 id="2-示例代码："><a href="#2-示例代码：" class="headerlink" title="2. 示例代码："></a>2. 示例代码：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// router.js  </span></span><br><span class="line"><span class="comment">// 1. 动态加载 model 和 路由组件</span></span><br><span class="line">&#123;</span><br><span class="line">    path: <span class="string">'product'</span>,</span><br><span class="line">    getComponent(nextState, cb) &#123;</span><br><span class="line">        <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</span><br><span class="line">            <span class="comment">// 从location 中获取业务类型 type</span></span><br><span class="line">            <span class="keyword">const</span> type = nextState.location.query.type</span><br><span class="line">            <span class="comment">// 加载model并挂载到dva实例上  注意：require后接了()，因为返回的是一个函数，函数执行返回真正将被挂载的model对象</span></span><br><span class="line">            app.model(<span class="built_in">require</span>(<span class="string">'./models/product'</span>)(type))</span><br><span class="line">            <span class="comment">// 加载路由组件  require 返回的也是一个函数，函数执行返回一个React组件（高阶组件，在真正的路由组件上包了一层）</span></span><br><span class="line">            cb(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./routes/product'</span>)(type))</span><br><span class="line">        &#125;, <span class="string">'product'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// models/product.js  </span></span><br><span class="line"><span class="comment">// 2. 根据type 动态生成 model</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">modelGenerate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        namespace: <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span>,</span><br><span class="line">        state: &#123;</span><br><span class="line">            list: []</span><br><span class="line">        &#125;,</span><br><span class="line">        reducers: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        effects: &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// routes/product.jsx  </span></span><br><span class="line"><span class="comment">// 3. 根据type 动态返回 新的React组件（对业务组件进行包装）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">routeGenarate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据type找到命名空间</span></span><br><span class="line">    <span class="keyword">const</span> namespace = <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ProductWrapper</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">            render() &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Products</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">            &#125;</span></span><br><span class="line"><span class="xml">        &#125;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">    // 根据 namespace(命名空间) 从redux store 获取对应的model实例数据 ，并命名为 productModel</span></span><br><span class="line"><span class="xml">    return connect(store =&gt; (&#123; productModel: store[namespace] &#125;))(ProductWrapper())</span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">// 业务组件 从 props.productModel 获取数据</span></span><br><span class="line"><span class="xml">const Products = (&#123; dispatch, productModel &#125;) =&gt; &#123;</span></span><br><span class="line"><span class="xml">    return (</span></span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ProductList list=&#123;productModel.list&#125; /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h3 id="一-概述"><a href="#一-概述" class="headerlink" title="一.概述"></a>一.概述</h3><pre><code>门户入口，通过iframe集成其他内部项目，希望当用户打开项目(不管是门户或者iframe页)时，上报如下指标：当前时间、访问Url、项目、页面加载耗时、超时资源等
+
+主要目的是：
+1. 希望实现网络故障或繁忙时，自动预警
+2. 有针对性的优化用户访问速度，找到用户访问慢的根源
+3. 根据用户上报信息，对访问时段、访问频次、项目打开频次等数据做进一步的探索
+</code></pre><h3 id="二-大致步骤"><a href="#二-大致步骤" class="headerlink" title="二.大致步骤"></a>二.大致步骤</h3><h4 id="1-通过PerFormance对象获取性能信息"><a href="#1-通过PerFormance对象获取性能信息" class="headerlink" title="1. 通过PerFormance对象获取性能信息"></a>1. 通过PerFormance对象获取性能信息</h4><p>通过<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Performance" target="_blank" rel="noopener">perFormance</a>全局对象可以获取页面性能相关信息，目前兼容到IE10，已经可用<br><img src="https://dknfeiov.github.io/images/files/performance/performance.gif" alt=""> </p>
+<ol>
+<li>获取页面加载时间<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">performance.getEntriesByType(<span class="string">'navigation'</span>)</span><br><span class="line"></span><br><span class="line">通过name获取加载当前url , 根据domComplete获取页面加载耗（ms）</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://dknfeiov.github.io/images/files/performance/load.gif" alt=""> </p>
+<ol start="2">
+<li>获取超时资源列表<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">performance.getEntriesByType(<span class="string">'resource'</span>)</span><br><span class="line">    .filter(<span class="function"><span class="params">item</span> =&gt;</span> item.duration &gt;= <span class="number">5000</span>)  <span class="comment">// 找出加载时间超过5s 的资源</span></span><br><span class="line"><span class="comment">// initiatorType 类型</span></span><br><span class="line"><span class="comment">// name 名称</span></span><br><span class="line"><span class="comment">// duration 耗时</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://dknfeiov.github.io/images/files/performance/resource.gif" alt=""> </p>
+<h4 id="2-页面加载完自动上报"><a href="#2-页面加载完自动上报" class="headerlink" title="2. 页面加载完自动上报"></a>2. 页面加载完自动上报</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">reportNavigate() &#123;</span><br><span class="line">    <span class="comment">// 后台上报</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 简略实现</span></span><br><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 尽量不影响页面主线程</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback) &#123;</span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        setTimeout(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-监控iframe加载"><a href="#3-监控iframe加载" class="headerlink" title="3. 监控iframe加载"></a>3. 监控iframe加载</h4><pre><code>通过传入iframe的window全局对象
+</code></pre><h3 id="三-完整代码"><a href="#三-完整代码" class="headerlink" title="三.完整代码"></a>三.完整代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 监控主项目，自动上报</span></span><br><span class="line"><span class="keyword">new</span> PerformanceMonitor(<span class="string">'main'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监控iframe子项目， 手动上报</span></span><br><span class="line"><span class="keyword">this</span>.monitor = <span class="keyword">new</span> PerformanceMonitor(<span class="string">'iframe'</span>, <span class="built_in">window</span>.frames[<span class="number">0</span>].window, <span class="literal">null</span>, <span class="literal">false</span>)</span><br><span class="line"><span class="comment">// jsx</span></span><br><span class="line">&lt;iframe onLoad=&#123;() =&gt; &#123;<span class="keyword">this</span>.monitor.reportNavigate()&#125;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 定义监控类</span></span><br><span class="line"><span class="keyword">import</span> &#123; report &#125; <span class="keyword">from</span> <span class="string">'../services/monitor'</span></span><br><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">PerformanceMonitor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    SECOND = <span class="number">1000</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *   origin 标示来源，当有多个日志源时</span></span><br><span class="line"><span class="comment">    *   $window 默认为window对象，iframe传入iframe的全局window对象</span></span><br><span class="line"><span class="comment">    *   timeout 超时时间判断</span></span><br><span class="line"><span class="comment">    *   auto 默认自动上报，若为false，需手动调用上报方法</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">constructor</span>(origin, $window, timeout, auto = true) &#123;</span><br><span class="line">        <span class="keyword">this</span>.origin = origin</span><br><span class="line">        <span class="keyword">this</span>.timeout = timeout || <span class="keyword">this</span>.SECOND * <span class="number">5</span></span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span> = $<span class="built_in">window</span> || <span class="built_in">window</span></span><br><span class="line">        <span class="keyword">this</span>.reportNavigate = <span class="keyword">this</span>.reportNavigate.bind(<span class="keyword">this</span>)</span><br><span class="line">        <span class="comment">// 自动上报</span></span><br><span class="line">        <span class="keyword">if</span> (auto) &#123;</span><br><span class="line">            <span class="keyword">this</span>.bindNavigate()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取页面加载时间</span></span><br><span class="line">    getLoadTime() &#123;</span><br><span class="line">        <span class="keyword">const</span> navigation = <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.getEntriesByType(<span class="string">'navigation'</span>)</span><br><span class="line">        <span class="keyword">if</span> (navigation &amp;&amp; navigation.length !== <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> navigation[<span class="number">0</span>].domComplete</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 兼容低版本Chrome</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.timing.domComplete - <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.timing.navigationStart</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取超时资源</span></span><br><span class="line">    getTimeoutRes() &#123;</span><br><span class="line">        <span class="comment">// initiatorType 类型</span></span><br><span class="line">        <span class="comment">// name 名称</span></span><br><span class="line">        <span class="comment">// duration 耗时</span></span><br><span class="line">        <span class="keyword">const</span> resourceTimes = <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.getEntriesByType(<span class="string">'resource'</span>)</span><br><span class="line">        <span class="keyword">return</span> resourceTimes</span><br><span class="line">            .filter(<span class="function"><span class="params">item</span> =&gt;</span> item.duration &gt;= <span class="keyword">this</span>.timeout)</span><br><span class="line">            .map(<span class="function"><span class="params">res</span> =&gt;</span> (&#123;</span><br><span class="line">                TIMEOUTRES_TYPE: res.initiatorType || <span class="string">'null'</span>,</span><br><span class="line">                TIMEOUTRES_URL: res.name,</span><br><span class="line">                TIMEOUTRES_DATE: res.duration</span><br><span class="line">            &#125;))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前URl并解码</span></span><br><span class="line">    getUrl() &#123;</span><br><span class="line">        <span class="keyword">let</span> url</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            url = <span class="built_in">decodeURIComponent</span>(<span class="keyword">this</span>.$<span class="built_in">window</span>.location.href)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'url decode异常'</span>)</span><br><span class="line">            url = <span class="keyword">this</span>.$<span class="built_in">window</span>.location.href</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> url</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 页面加载完上报</span></span><br><span class="line">    reportNavigate() &#123;</span><br><span class="line">        <span class="keyword">const</span> domComplete = <span class="keyword">this</span>.getLoadTime()</span><br><span class="line">        <span class="keyword">const</span> timeoutRes = <span class="keyword">this</span>.getTimeoutRes()</span><br><span class="line">        <span class="keyword">const</span> url = <span class="keyword">this</span>.getUrl()</span><br><span class="line">        <span class="keyword">const</span> logData = &#123;</span><br><span class="line">            MONITOR_ORIGIN: <span class="keyword">this</span>.origin,</span><br><span class="line">            MONITOR_TYPE: <span class="string">'navigate'</span>,</span><br><span class="line">            MONITOR_URL: url,</span><br><span class="line">            MONITOR_TIMEOUT: <span class="keyword">this</span>.timeout,</span><br><span class="line">            MONITOR_TIMEOUTRES: timeoutRes,</span><br><span class="line">            MONITOR_LOADTIME: domComplete,</span><br><span class="line">            MONITOR_REPORTTIME: moment().format(<span class="string">'YYYY-MM-DD HH:mm:ss'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.report(logData)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可以自定义上报信息</span></span><br><span class="line">    report(data) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            report(data)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'日志上报异常'</span>, error)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绑定事件、自动上报</span></span><br><span class="line">    bindNavigate() &#123;</span><br><span class="line">        <span class="keyword">const</span> oldOnload = <span class="keyword">this</span>.$<span class="built_in">window</span>.onload</span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (oldOnload &amp;&amp; <span class="keyword">typeof</span> oldOnload === <span class="string">'function'</span>) &#123;</span><br><span class="line">                oldOnload(e)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 尽量不影响页面主线程</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback) &#123;</span><br><span class="line">                <span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                setTimeout(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.bind(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -398,7 +419,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/React-DvaJS/" rel="tag"># React, DvaJS</a>
+            <a href="/tags/HTTP/" rel="tag"># HTTP</a>
           
         </div>
       
@@ -411,8 +432,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/30/Generator与async,await/" rel="next" title="Generator与async、await[借鉴自MDN]">
-                <i class="fa fa-chevron-left"></i> Generator与async、await[借鉴自MDN]
+              <a href="/2018/08/30/DvaJS实现model复用/" rel="next" title="DvaJS model复用的方案">
+                <i class="fa fa-chevron-left"></i> DvaJS model复用的方案
               </a>
             
           </div>
@@ -420,10 +441,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/19/前端性能监控/" rel="prev" title="前端性能监控">
-                前端性能监控 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -566,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）"><span class="nav-number">1.</span> <span class="nav-text">Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-示例描述："><span class="nav-number">1.1.</span> <span class="nav-text">1. 示例描述：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-示例代码："><span class="nav-number">1.2.</span> <span class="nav-text">2. 示例代码：</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-概述"><span class="nav-number">1.</span> <span class="nav-text">一.概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-大致步骤"><span class="nav-number">2.</span> <span class="nav-text">二.大致步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-通过PerFormance对象获取性能信息"><span class="nav-number">2.1.</span> <span class="nav-text">1. 通过PerFormance对象获取性能信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-页面加载完自动上报"><span class="nav-number">2.2.</span> <span class="nav-text">2. 页面加载完自动上报</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-监控iframe加载"><span class="nav-number">2.3.</span> <span class="nav-text">3. 监控iframe加载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-完整代码"><span class="nav-number">3.</span> <span class="nav-text">三.完整代码</span></a></li></ol></div>
             
 
           </div>

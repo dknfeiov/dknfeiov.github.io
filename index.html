@@ -263,6 +263,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/前端性能监控/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="何润斌">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HeRunBin's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/19/前端性能监控/" itemprop="url">前端性能监控</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-19T18:21:58+08:00">
+                2018-09-19
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T17:00:03+08:00">
+                2018-09-19
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  851
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="一-概述"><a href="#一-概述" class="headerlink" title="一.概述"></a>一.概述</h3><pre><code>门户入口，通过iframe集成其他内部项目，希望当用户打开项目(不管是门户或者iframe页)时，上报如下指标：当前时间、访问Url、项目、页面加载耗时、超时资源等
+
+主要目的是：
+1. 希望实现网络故障或繁忙时，自动预警
+2. 有针对性的优化用户访问速度，找到用户访问慢的根源
+3. 根据用户上报信息，对访问时段、访问频次、项目打开频次等数据做进一步的探索
+</code></pre><h3 id="二-大致步骤"><a href="#二-大致步骤" class="headerlink" title="二.大致步骤"></a>二.大致步骤</h3><h4 id="1-通过PerFormance对象获取性能信息"><a href="#1-通过PerFormance对象获取性能信息" class="headerlink" title="1. 通过PerFormance对象获取性能信息"></a>1. 通过PerFormance对象获取性能信息</h4><p>通过<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Performance" target="_blank" rel="noopener">perFormance</a>全局对象可以获取页面性能相关信息，目前兼容到IE10，已经可用<br><img src="https://dknfeiov.github.io/images/files/performance/performance.gif" alt=""> </p>
+<ol>
+<li>获取页面加载时间<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">performance.getEntriesByType(<span class="string">'navigation'</span>)</span><br><span class="line"></span><br><span class="line">通过name获取加载当前url , 根据domComplete获取页面加载耗（ms）</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://dknfeiov.github.io/images/files/performance/load.gif" alt=""> </p>
+<ol start="2">
+<li>获取超时资源列表<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">performance.getEntriesByType(<span class="string">'resource'</span>)</span><br><span class="line">    .filter(<span class="function"><span class="params">item</span> =&gt;</span> item.duration &gt;= <span class="number">5000</span>)  <span class="comment">// 找出加载时间超过5s 的资源</span></span><br><span class="line"><span class="comment">// initiatorType 类型</span></span><br><span class="line"><span class="comment">// name 名称</span></span><br><span class="line"><span class="comment">// duration 耗时</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://dknfeiov.github.io/images/files/performance/resource.gif" alt=""> </p>
+<h4 id="2-页面加载完自动上报"><a href="#2-页面加载完自动上报" class="headerlink" title="2. 页面加载完自动上报"></a>2. 页面加载完自动上报</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">reportNavigate() &#123;</span><br><span class="line">    <span class="comment">// 后台上报</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 简略实现</span></span><br><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 尽量不影响页面主线程</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback) &#123;</span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        setTimeout(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-监控iframe加载"><a href="#3-监控iframe加载" class="headerlink" title="3. 监控iframe加载"></a>3. 监控iframe加载</h4><pre><code>通过传入iframe的window全局对象
+</code></pre><h3 id="三-完整代码"><a href="#三-完整代码" class="headerlink" title="三.完整代码"></a>三.完整代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 监控主项目，自动上报</span></span><br><span class="line"><span class="keyword">new</span> PerformanceMonitor(<span class="string">'main'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监控iframe子项目， 手动上报</span></span><br><span class="line"><span class="keyword">this</span>.monitor = <span class="keyword">new</span> PerformanceMonitor(<span class="string">'iframe'</span>, <span class="built_in">window</span>.frames[<span class="number">0</span>].window, <span class="literal">null</span>, <span class="literal">false</span>)</span><br><span class="line"><span class="comment">// jsx</span></span><br><span class="line">&lt;iframe onLoad=&#123;() =&gt; &#123;<span class="keyword">this</span>.monitor.reportNavigate()&#125;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 定义监控类</span></span><br><span class="line"><span class="keyword">import</span> &#123; report &#125; <span class="keyword">from</span> <span class="string">'../services/monitor'</span></span><br><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">PerformanceMonitor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    SECOND = <span class="number">1000</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *   origin 标示来源，当有多个日志源时</span></span><br><span class="line"><span class="comment">    *   $window 默认为window对象，iframe传入iframe的全局window对象</span></span><br><span class="line"><span class="comment">    *   timeout 超时时间判断</span></span><br><span class="line"><span class="comment">    *   auto 默认自动上报，若为false，需手动调用上报方法</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">constructor</span>(origin, $window, timeout, auto = true) &#123;</span><br><span class="line">        <span class="keyword">this</span>.origin = origin</span><br><span class="line">        <span class="keyword">this</span>.timeout = timeout || <span class="keyword">this</span>.SECOND * <span class="number">5</span></span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span> = $<span class="built_in">window</span> || <span class="built_in">window</span></span><br><span class="line">        <span class="keyword">this</span>.reportNavigate = <span class="keyword">this</span>.reportNavigate.bind(<span class="keyword">this</span>)</span><br><span class="line">        <span class="comment">// 自动上报</span></span><br><span class="line">        <span class="keyword">if</span> (auto) &#123;</span><br><span class="line">            <span class="keyword">this</span>.bindNavigate()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取页面加载时间</span></span><br><span class="line">    getLoadTime() &#123;</span><br><span class="line">        <span class="keyword">const</span> navigation = <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.getEntriesByType(<span class="string">'navigation'</span>)</span><br><span class="line">        <span class="keyword">if</span> (navigation &amp;&amp; navigation.length !== <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> navigation[<span class="number">0</span>].domComplete</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 兼容低版本Chrome</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.timing.domComplete - <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.timing.navigationStart</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取超时资源</span></span><br><span class="line">    getTimeoutRes() &#123;</span><br><span class="line">        <span class="comment">// initiatorType 类型</span></span><br><span class="line">        <span class="comment">// name 名称</span></span><br><span class="line">        <span class="comment">// duration 耗时</span></span><br><span class="line">        <span class="keyword">const</span> resourceTimes = <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.getEntriesByType(<span class="string">'resource'</span>)</span><br><span class="line">        <span class="keyword">return</span> resourceTimes</span><br><span class="line">            .filter(<span class="function"><span class="params">item</span> =&gt;</span> item.duration &gt;= <span class="keyword">this</span>.timeout)</span><br><span class="line">            .map(<span class="function"><span class="params">res</span> =&gt;</span> (&#123;</span><br><span class="line">                TIMEOUTRES_TYPE: res.initiatorType || <span class="string">'null'</span>,</span><br><span class="line">                TIMEOUTRES_URL: res.name,</span><br><span class="line">                TIMEOUTRES_DATE: res.duration</span><br><span class="line">            &#125;))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前URl并解码</span></span><br><span class="line">    getUrl() &#123;</span><br><span class="line">        <span class="keyword">let</span> url</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            url = <span class="built_in">decodeURIComponent</span>(<span class="keyword">this</span>.$<span class="built_in">window</span>.location.href)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'url decode异常'</span>)</span><br><span class="line">            url = <span class="keyword">this</span>.$<span class="built_in">window</span>.location.href</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> url</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 页面加载完上报</span></span><br><span class="line">    reportNavigate() &#123;</span><br><span class="line">        <span class="keyword">const</span> domComplete = <span class="keyword">this</span>.getLoadTime()</span><br><span class="line">        <span class="keyword">const</span> timeoutRes = <span class="keyword">this</span>.getTimeoutRes()</span><br><span class="line">        <span class="keyword">const</span> url = <span class="keyword">this</span>.getUrl()</span><br><span class="line">        <span class="keyword">const</span> logData = &#123;</span><br><span class="line">            MONITOR_ORIGIN: <span class="keyword">this</span>.origin,</span><br><span class="line">            MONITOR_TYPE: <span class="string">'navigate'</span>,</span><br><span class="line">            MONITOR_URL: url,</span><br><span class="line">            MONITOR_TIMEOUT: <span class="keyword">this</span>.timeout,</span><br><span class="line">            MONITOR_TIMEOUTRES: timeoutRes,</span><br><span class="line">            MONITOR_LOADTIME: domComplete,</span><br><span class="line">            MONITOR_REPORTTIME: moment().format(<span class="string">'YYYY-MM-DD HH:mm:ss'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.report(logData)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可以自定义上报信息</span></span><br><span class="line">    report(data) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            report(data)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'日志上报异常'</span>, error)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绑定事件、自动上报</span></span><br><span class="line">    bindNavigate() &#123;</span><br><span class="line">        <span class="keyword">const</span> oldOnload = <span class="keyword">this</span>.$<span class="built_in">window</span>.onload</span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (oldOnload &amp;&amp; <span class="keyword">typeof</span> oldOnload === <span class="string">'function'</span>) &#123;</span><br><span class="line">                oldOnload(e)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 尽量不影响页面主线程</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback) &#123;</span><br><span class="line">                <span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                setTimeout(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.bind(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/30/DvaJS实现model复用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -380,7 +563,7 @@
             <h3 id="Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）"><a href="#Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）" class="headerlink" title="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）"></a><a href="https://dvajs.com/guide/getting-started.html#%E5%AE%9A%E4%B9%89-model" target="_blank" rel="noopener">Dva</a> 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）</h3><pre><code>前置知识: dva  =&gt;  一个基于 redux 和 redux-saga 的数据流方案
          react =&gt; 高阶组件的定义
 </code></pre><h4 id="1-示例描述："><a href="#1-示例描述：" class="headerlink" title="1. 示例描述："></a>1. 示例描述：</h4><pre><code>多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用
-</code></pre><h4 id="2-示例代码："><a href="#2-示例代码：" class="headerlink" title="2. 示例代码："></a>2. 示例代码：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// router.js  </span></span><br><span class="line"><span class="comment">// 1. 动态加载 model 和 路由组件</span></span><br><span class="line">&#123;</span><br><span class="line">    path: <span class="string">'product'</span>,</span><br><span class="line">    getComponent(nextState, cb) &#123;</span><br><span class="line">        <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</span><br><span class="line">            <span class="comment">// 从location 中获取业务类型 type</span></span><br><span class="line">            <span class="keyword">const</span> type = nextState.location.query.type</span><br><span class="line">            <span class="comment">// 加载model并挂载到dva实例上  注意：require后接了()，因为返回的是一个函数，函数执行返回真正将被挂载的model对象</span></span><br><span class="line">            app.model(<span class="built_in">require</span>(<span class="string">'./models/product'</span>)(type))</span><br><span class="line">            <span class="comment">// 加载路由组件  require 返回的也是一个函数，函数执行返回一个React组件（高阶组件，在真正的路由组件上包了一层）</span></span><br><span class="line">            cb(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./routes/product'</span>)(type))</span><br><span class="line">        &#125;, <span class="string">'product'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// models/product.js  </span></span><br><span class="line"><span class="comment">// 2. 根据type 动态生成 model</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">modelGenerate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        namespace: <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span>,</span><br><span class="line">        state: &#123;</span><br><span class="line">            list: []</span><br><span class="line">        &#125;,</span><br><span class="line">        reducers: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        effects: &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// routes/product.jsx  </span></span><br><span class="line"><span class="comment">// 3. 根据type 动态返回 新的React组件（对业务组件进行包装）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">routeGenarate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据type找到命名空间</span></span><br><span class="line">    <span class="keyword">const</span> namespace = <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ProductWrapper</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">            render() &#123;</span><br><span class="line">                <span class="keyword">return</span> &lt;Products &#123;...this.props&#125; /&gt;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 根据 namespace(命名空间) 从redux store 获取对应的model实例数据 ，并命名为 productModel</span><br><span class="line">    return connect(store =&gt; (&#123; productModel: store[namespace] &#125;))(ProductWrapper())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 业务组件 从 props.productModel 获取数据</span><br><span class="line">const Products = (&#123; dispatch, productModel &#125;) =&gt; &#123;</span><br><span class="line">    return (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ProductList list=&#123;productModel.list&#125; /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><h4 id="2-示例代码："><a href="#2-示例代码：" class="headerlink" title="2. 示例代码："></a>2. 示例代码：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// router.js  </span></span><br><span class="line"><span class="comment">// 1. 动态加载 model 和 路由组件</span></span><br><span class="line">&#123;</span><br><span class="line">    path: <span class="string">'product'</span>,</span><br><span class="line">    getComponent(nextState, cb) &#123;</span><br><span class="line">        <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</span><br><span class="line">            <span class="comment">// 从location 中获取业务类型 type</span></span><br><span class="line">            <span class="keyword">const</span> type = nextState.location.query.type</span><br><span class="line">            <span class="comment">// 加载model并挂载到dva实例上  注意：require后接了()，因为返回的是一个函数，函数执行返回真正将被挂载的model对象</span></span><br><span class="line">            app.model(<span class="built_in">require</span>(<span class="string">'./models/product'</span>)(type))</span><br><span class="line">            <span class="comment">// 加载路由组件  require 返回的也是一个函数，函数执行返回一个React组件（高阶组件，在真正的路由组件上包了一层）</span></span><br><span class="line">            cb(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./routes/product'</span>)(type))</span><br><span class="line">        &#125;, <span class="string">'product'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// models/product.js  </span></span><br><span class="line"><span class="comment">// 2. 根据type 动态生成 model</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">modelGenerate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        namespace: <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span>,</span><br><span class="line">        state: &#123;</span><br><span class="line">            list: []</span><br><span class="line">        &#125;,</span><br><span class="line">        reducers: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        effects: &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// routes/product.jsx  </span></span><br><span class="line"><span class="comment">// 3. 根据type 动态返回 新的React组件（对业务组件进行包装）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">routeGenarate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据type找到命名空间</span></span><br><span class="line">    <span class="keyword">const</span> namespace = <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ProductWrapper</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">            render() &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Products</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">            &#125;</span></span><br><span class="line"><span class="xml">        &#125;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">    // 根据 namespace(命名空间) 从redux store 获取对应的model实例数据 ，并命名为 productModel</span></span><br><span class="line"><span class="xml">    return connect(store =&gt; (&#123; productModel: store[namespace] &#125;))(ProductWrapper())</span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">// 业务组件 从 props.productModel 获取数据</span></span><br><span class="line"><span class="xml">const Products = (&#123; dispatch, productModel &#125;) =&gt; &#123;</span></span><br><span class="line"><span class="xml">    return (</span></span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ProductList list=&#123;productModel.list&#125; /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
           
         
@@ -476,8 +659,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:30:35+08:00">
-                2018-08-31
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T15:52:05+08:00">
+                2018-09-19
               </time>
             
           </span>
@@ -504,7 +687,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,125
+                  1,127
                 </span>
               
 
@@ -546,7 +729,7 @@
             <h3 id="一-ES6-Generator-生成器-语法"><a href="#一-ES6-Generator-生成器-语法" class="headerlink" title="一. ES6 Generator(生成器) 语法"></a>一. ES6 Generator(生成器) 语法</h3><pre><code>function* 用于定义一个生成器函数（generator function），它返回一个Generator对象, Generator对象被创建后，通过调用next()方法获取值
 
 yield 关键字用来暂停和恢复一个生成器函数 
-</code></pre><ol>
+</code></pre><h4 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h4><ol>
 <li><p>yield关键字使生成器函数执行暂停，yield关键字后面的表达式的值返回给生成器的调用者。它可以被认为是一个基于生成器的版本的return关键字</p>
 </li>
 <li><p>yield关键字实际返回一个IteratorResult对象，它有两个属性，value和done。value属性是对yield表达式求值的结果，而done是false，表示生成器函数尚未完全完成。</p>
@@ -563,17 +746,19 @@ yield 关键字用来暂停和恢复一个生成器函数
 </li>
 </ul>
 </li>
+<li><p>示例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">countAppleSales</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> saleList = [<span class="number">3</span>, <span class="number">7</span>, <span class="number">5</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; saleList.length; i++) &#123;</span><br><span class="line">        <span class="keyword">yield</span> saleList[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> appleStore = countAppleSales(); <span class="comment">// Generator &#123; &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 3, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 7, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 5, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: undefined, done: true &#125;</span></span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例：</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">countAppleSales</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> saleList = [<span class="number">3</span>, <span class="number">7</span>, <span class="number">5</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; saleList.length; i++) &#123;</span><br><span class="line">        <span class="keyword">yield</span> saleList[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> appleStore = countAppleSales(); <span class="comment">// Generator &#123; &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 3, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 7, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: 5, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(appleStore.next()); <span class="comment">// &#123; value: undefined, done: true &#125;</span></span><br></pre></td></tr></table></figure>
-
-##### 注意： 
-    1. 不能在forEach等方法中直接使用yield，因为forEach等接受一个函数作为参数，yield外层执行环境不是生成器函数，所以会报语法错误，错误示例如下
+<h4 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h4><ol>
+<li><p>不能在forEach等方法中直接使用yield，因为forEach等接受一个函数作为参数，yield外层执行环境不是生成器函数，所以会报语法错误，错误示例如下</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">nameGenerator</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    [<span class="string">'Hellon'</span>,<span class="string">'Nancy'</span>].forEach(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">yield</span> item  <span class="comment">// =&gt; Uncaught SyntaxError: Unexpected identifier</span></span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-    2. 也可作为对象属性存在，通过如下方式定义
+</li>
+<li><p>也可作为对象属性存在，通过如下方式定义</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*countAppleSales() &#123;&#125;</span><br></pre></td></tr></table></figure>
-</code></pre><ol start="3">
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield*" target="_blank" rel="noopener">yield*</a> 表达式用于委托给另一个generator 或可迭代对象。</li>
+</li>
+<li><p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield*" target="_blank" rel="noopener">yield*</a> 表达式用于委托给另一个generator 或可迭代对象。</p>
+</li>
 </ol>
 <h3 id="二-Async-function："><a href="#二-Async-function：" class="headerlink" title="二. Async function："></a>二. Async function：</h3><ol>
 <li><p>async function 声明将定义一个返回 AsyncFunction 对象的异步函数。异步函数是指通过事件循环异步执行的函数，它会通过一个隐式的 Promise 返回其结果。但是如果你的代码使用了异步函数，它的语法和结构会更像是标准的同步函数</p>
@@ -678,8 +863,8 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:19:35+08:00">
-                2018-08-31
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T15:38:20+08:00">
+                2018-09-19
               </time>
             
           </span>
@@ -706,7 +891,7 @@ yield 关键字用来暂停和恢复一个生成器函数
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,190
+                  1,538
                 </span>
               
 
@@ -722,7 +907,7 @@ yield 关键字用来暂停和恢复一个生成器函数
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  6
                 </span>
               
             </div>
@@ -745,12 +930,27 @@ yield 关键字用来暂停和恢复一个生成器函数
       
         
           
-            <pre><code>示例代码皆为伪代码，仅供理解
-</code></pre><h3 id="Angular"><a href="#Angular" class="headerlink" title="Angular"></a>Angular</h3><blockquote>
-<p>模块化、组件化、依赖注入、脏检查</p>
+            <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><pre><code>我对前端框架的看法是，同一个问题的多种解决方案，每个方案都有各有适应的场景和人群，但既然解决的是同一个问题，殊途同归，本文就是根据自己的使用经验，列举出Angular、React二者在不同中的相通之处
+</code></pre><blockquote>
+<p><em>示例代码皆为伪代码，仅供理解</em></p>
+</blockquote>
+<h3 id="脉络"><a href="#脉络" class="headerlink" title="脉络"></a>脉络</h3><blockquote>
+<p>前端现代框架的一些基本逻辑:</p>
+<ol>
+<li>组件化, 从原来代码级的复用提升到组件层，组件抽象出可复用的功能与UI，就像一个个零件</li>
+</ol>
+</blockquote>
+<ol start="2">
+<li><p>数据驱动，隐藏DOM操作的细节，页面工程化，整个页面就是一个大的机器，组件就是组成机器一个个的齿轮，受内外部数据驱动，影响周围的齿轮随之发生变化</p>
+</li>
+<li><p>工程化，集成脚手架等插件，使用路由统一入口</p>
+</li>
+</ol>
+<h3 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h3><h5 id="一-Angular"><a href="#一-Angular" class="headerlink" title="一. Angular"></a>一. Angular</h5><blockquote>
+<p><strong>关键词：</strong>　模块化、组件化、依赖注入、脏检查</p>
 </blockquote>
 <ol>
-<li><p>Angular应用是模块化的， 一个NgModule就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目</p>
+<li><p>Angular应用是模块化的，一个NgModule（模块）就是一个容器，存放一些内聚代码块，如组件、指令、服务、管道等，提供导入、导出功能，每个Angular应用都会有一个根模块，引导根模块启动项目</p>
 </li>
 <li><p>组件可以通过路由器加载，也可以通过模板创建，组件是指令的一种，是带模版的指令，除了组件外，指令还有结构型指令和功能型指令二种，指令拥有生命周期钩子函数。在生命周期不同阶段被调用</p>
 </li>
@@ -761,8 +961,8 @@ yield 关键字用来暂停和恢复一个生成器函数
 <li><p>其他，路由、HttpCLient + 拦截器机制， 视图封装模式（Native、Emulated、None），动态组件、dom操作（Renderer）、Rxjs管理异步事件流</p>
 </li>
 </ol>
-<h3 id="React"><a href="#React" class="headerlink" title="React"></a>React</h3><blockquote>
-<p>组件化、函数式编程、虚拟dom</p>
+<h5 id="二-React"><a href="#二-React" class="headerlink" title="二. React"></a>二. React</h5><blockquote>
+<p>　<strong>关键词：</strong> 组件化、函数式编程、虚拟dom</p>
 </blockquote>
 <ol>
 <li><p>React 维护一颗组件树， 数据通过props从上往下单向流动，组件内部通过state保存状态，通过setState改变state的值，默认当props或state发生变化，组件重新渲染，PureReactComponent组件默认判断新旧props,state（浅引用判断）值，如果没有变化，不重新渲染，但过多diff操作同样消耗性能， 普通Component 可通过使用 shouldComponentUpdate生命周期钩子，返回true|false 来决定是否重新渲染组件，结合 immutable 对象可以更好的对性能进行优化</p>
@@ -774,12 +974,12 @@ yield 关键字用来暂停和恢复一个生成器函数
 <li><p>react利用key来识别组件，它是一种身份标识标识，当key发生变化，销毁原有组件，创建新组件，key没有变化，数据变化，重新渲染原组件</p>
 </li>
 </ol>
-<h3 id="二者差异"><a href="#二者差异" class="headerlink" title="二者差异"></a>二者差异</h3><ol>
-<li><p>数据流向： Angular 数据从上往下，单向流动，通过Output自定义事件与父组件通信 ， React 通过props从上往下，数据单向流动，通过state保存当前组件内部的状态，通过setState改变组件内部状态，与父组件通信通常通过状态提升来完成，或使用redux</p>
+<h3 id="二者比较"><a href="#二者比较" class="headerlink" title="二者比较"></a>二者比较</h3><ol>
+<li><p>数据流向： Angular 数据从上往下，单向流动，通过Output自定义事件与父组件通信 ， React 通过props从上往下，数据单向流动，通过state保存当前组件内部的状态，通过setState改变组件内部状态，与父组件通信通常通过状态提升来完成，常结合redux/mobx使用</p>
 </li>
-<li><p>不可变性： @Input 、props 传递的数据都是不可变的（Angular官方文档并没有明确提示，但我从来没这么写过，就算可以也不建议，如果一定要对@Input传递的数据进行处理，可以用set去实现）</p>
+<li><p>不可变性：因为数据单向流动，所有子组件从父级接收的数据是不可变的（@Input 、props），Angular如果要对@Input传递的数据进行处理，可以用set去实现</p>
 </li>
-<li><p>Angular 中的结构型指令如<em>ngIf、</em>ngFor , React通过如下jsx语法实现同样的功能</p>
+<li><p>Angular使用模板语法，通过结构型指令如<em>ngIf、</em>ngFor 实现条件渲染、列表展示, React通过jsx语法实现同样的功能，如下</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> &amp;&amp; &lt;div&gt;、datas.map(i,v)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Angular 表单提供二种方式，模板驱动与响应式表单，前者通过模板语法与指令实现，后者由模型驱动，预先定义字段、校验项、初始值，提供校验方法，React 表单一般通过受控组件的方式实现</p>
@@ -788,14 +988,16 @@ yield 关键字用来暂停和恢复一个生成器函数
 </li>
 <li><p>避免重复渲染，性能优化，React 通常使用 shouldComponentUpdate + Immutable 对象减少重复渲染， Angular通常设置 changedetectionstrategy.onpush + Immutable 对象</p>
 </li>
-<li><p>获取Dom对象，React使用 refs传递，Angular 通过ViewChild实现对dom节点的引用</p>
+<li><p>集成第三方库时，常需要获取Dom对象，React使用 refs传递，Angular 通过ViewChild实现对dom节点的引用</p>
 </li>
 </ol>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">React : </span><br><span class="line">    &lt;div ref=&#123;domRef&#125;&gt; <span class="comment">// 通过this.domRef获取dom节点</span></span><br><span class="line"></span><br><span class="line">Angular : </span><br><span class="line">    .ts:</span><br><span class="line">        ViewChild(selector) domRef</span><br><span class="line">    .html:</span><br><span class="line">        &lt;div seletor&gt;</span><br></pre></td></tr></table></figure>
 <ol start="8">
-<li>Angular 相对React ，概念更多，给出了一个更复杂的解决方案，但同时，Angular提供了React没有的模块化、提供成体系的前端技术解决方案、引入typescript进行类型定义，对于大型协作项目的团队式开发和长期维护，是一个不错的选择</li>
+<li><p>Angular 相对React ，概念更多，给出了一个更复杂的解决方案，但同时，Angular提供了React没有的模块化、提供成体系的前端技术解决方案、引入typescript进行类型定义，对于大型协作项目的团队式开发和长期维护，是一个不错的选择，但正因为想要做的事情太多，不得不引入大量抽象概念，前期需要花费更多的时间</p>
+</li>
+<li><p>React 虽只提供了简单的API，但结合JSX语法，非常灵活且强大，但是灵活意味着容易犯错，相比较Angular，更容易把代码写的难以维护，对开发者个人的能力要求更高</p>
+</li>
 </ol>
-<!-- angular 每个component ， service， directive 都有自己的一个标识，很容易通过全局查找，知道在何处被使用 -->
 
           
         
@@ -891,8 +1093,8 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-15T10:29:02+08:00">
-                2018-08-15
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T15:36:31+08:00">
+                2018-09-19
               </time>
             
           </span>
@@ -919,7 +1121,7 @@ yield 关键字用来暂停和恢复一个生成器函数
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  646
+                  764
                 </span>
               
 
@@ -935,7 +1137,7 @@ yield 关键字用来暂停和恢复一个生成器函数
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -958,21 +1160,21 @@ yield 关键字用来暂停和恢复一个生成器函数
       
         
           
-            <h4 id="实现目标"><a href="#实现目标" class="headerlink" title="实现目标"></a>实现目标</h4><blockquote>
-<p>新建指令，将指令注册为表单控件，在元素上使用，可以通过ngModel实现双向绑定，双击可编辑元素内文字内容，失去焦点不可编辑</p>
-</blockquote>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">appCanEdit</span> [(<span class="attr">ngModel</span>)]=<span class="string">"item.value"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h5 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h5><p><img src="https://dknfeiov.github.io/images/files/editable.gif" alt="">  </p>
-<h4 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h4><h5 id="1-创建指令，实现-ControlValueAccessor接口"><a href="#1-创建指令，实现-ControlValueAccessor接口" class="headerlink" title="1. 创建指令，实现 ControlValueAccessor接口"></a>1. 创建指令，实现 ControlValueAccessor接口</h5><blockquote>
+            <h3 id="一-概述"><a href="#一-概述" class="headerlink" title="一.概述"></a>一.概述</h3><pre><code>如果希望实现一个DOM元素，双击可编辑，失去焦点不可编辑，常用的方式，是绑定dbclick事件，当事件触发，将文本内容替换为表单元素，失去焦点，再替换为文本，这种做法固然简单，但如果要操作的dom元素太多，既要添加表单元素，还要监听dbclick、blur事件，代码不可避免会变得非常繁琐
+
+所以我采取的做法是，抽象出一个指令，将指令注册为表单控件，实现双向绑定，结合DOM的contentEditable属性，只要在DOM元素上添加该指令即可具备该能力
+</code></pre><h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">appCanEdit</span> [(<span class="attr">ngModel</span>)]=<span class="string">"item.value"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h4><p><img src="https://dknfeiov.github.io/images/files/editable.gif" alt="">  </p>
+<h3 id="二-实现步骤"><a href="#二-实现步骤" class="headerlink" title="二.实现步骤"></a>二.实现步骤</h3><h4 id="1-创建指令，实现-ControlValueAccessor接口"><a href="#1-创建指令，实现-ControlValueAccessor接口" class="headerlink" title="1. 创建指令，实现 ControlValueAccessor接口"></a>1. 创建指令，实现 ControlValueAccessor接口</h4><blockquote>
 <p>ControlValueAccessor是一个连接表单模型和视图（DOM元素）的接口，自定义的表单控件必须实现这个接口,它的作用是把 form 模型中值映射到视图中，当视图发生变化时，通知 form directives 或 form controls</p>
 </blockquote>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[appCanEdit]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ElementCanEditDirective <span class="keyword">implements</span> ControlValueAccessor &#123;</span><br><span class="line"></span><br><span class="line">  _value;</span><br><span class="line">  <span class="comment">// callback function</span></span><br><span class="line">  propagateChange = <span class="function">(<span class="params">value: <span class="built_in">any</span></span>) =&gt;</span> &#123; &#125;;</span><br><span class="line">  <span class="comment">// Writes a new value to the element ，temporarily store the value in  '_value'</span></span><br><span class="line">  writeValue(value: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (value) &#123;</span><br><span class="line">      <span class="keyword">this</span>._value = value;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// when the control's value changes in the UI, call the callback function</span></span><br><span class="line">  registerOnChange(fn: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.propagateChange = fn;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  registerOnTouched(fn: <span class="built_in">any</span>) &#123; &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">  </span>) &#123; &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="2-注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件"><a href="#2-注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件" class="headerlink" title="2. 注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件"></a>2. 注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件</h5><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[appCanEdit]'</span>,</span><br><span class="line">  providers: [</span><br><span class="line">    &#123;</span><br><span class="line">      provide: NG_VALUE_ACCESSOR,</span><br><span class="line">      useExisting: forwardRef(<span class="function"><span class="params">()</span> =&gt;</span> ElementCanEditDirective),</span><br><span class="line">      multi: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<h5 id="3-通过-HostListener-为组件添加事件绑定，通过-HostBinding实现元素innerText随value而变化"><a href="#3-通过-HostListener-为组件添加事件绑定，通过-HostBinding实现元素innerText随value而变化" class="headerlink" title="3. 通过@HostListener 为组件添加事件绑定，通过@HostBinding实现元素innerText随value而变化"></a>3. 通过@HostListener 为组件添加事件绑定，通过@HostBinding实现元素innerText随value而变化</h5><blockquote>
+<h4 id="2-注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件"><a href="#2-注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件" class="headerlink" title="2. 注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件"></a>2. 注册成为表单控件，将控件本身注册到DI框架成为一个可以让表单访问其值的控件</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[appCanEdit]'</span>,</span><br><span class="line">  providers: [</span><br><span class="line">    &#123;</span><br><span class="line">      provide: NG_VALUE_ACCESSOR,</span><br><span class="line">      useExisting: forwardRef(<span class="function"><span class="params">()</span> =&gt;</span> ElementCanEditDirective),</span><br><span class="line">      multi: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h4 id="3-通过-HostListener-为组件添加事件绑定，通过-HostBinding实现元素innerText随value而变化"><a href="#3-通过-HostListener-为组件添加事件绑定，通过-HostBinding实现元素innerText随value而变化" class="headerlink" title="3. 通过@HostListener 为组件添加事件绑定，通过@HostBinding实现元素innerText随value而变化"></a>3. 通过@HostListener 为组件添加事件绑定，通过@HostBinding实现元素innerText随value而变化</h4><blockquote>
 <p>当元素处于可编辑状态时，添加content-editable类样式，以便灵活控制样式</p>
 </blockquote>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@HostBinding() get innerText() &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>._value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@HostListener(<span class="string">'blur'</span>, [<span class="string">'$event.target'</span>])</span><br><span class="line">onBlur(ele: HTMLElement) &#123;</span><br><span class="line">  ele.contentEditable = <span class="string">'false'</span>;</span><br><span class="line">  <span class="keyword">this</span>._value = ele.innerText;</span><br><span class="line">  <span class="keyword">this</span>.propagateChange(<span class="keyword">this</span>._value);</span><br><span class="line">  <span class="keyword">this</span>.render.removeClass(ele, <span class="string">'content-editable'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@HostListener(<span class="string">'dblclick'</span>, [<span class="string">'$event.target'</span>])</span><br><span class="line">dbClick(ele: HTMLElement) &#123;</span><br><span class="line">  <span class="comment">// plaintext-only</span></span><br><span class="line">  ele.contentEditable = <span class="string">'true'</span>;</span><br><span class="line">  ele.innerText = ele.innerText;</span><br><span class="line">  ele.focus();</span><br><span class="line">  <span class="keyword">this</span>.render.addClass(ele, <span class="string">'content-editable'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">appCanEdit</span> [(<span class="attr">ngModel</span>)]=<span class="string">"item.value"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="三-完整代码"><a href="#三-完整代码" class="headerlink" title="三.完整代码"></a>三.完整代码</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">appCanEdit</span> [(<span class="attr">ngModel</span>)]=<span class="string">"item.value"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component, OnInit, Input, EventEmitter, Directive, HostListener, HostBinding, Renderer2, forwardRef &#125; <span class="keyword">from</span> <span class="string">'@angular/core'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; ControlValueAccessor, NG_VALUE_ACCESSOR &#125; <span class="keyword">from</span> <span class="string">'@angular/forms'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 让DOM元素可编辑</span></span><br><span class="line"><span class="comment"> * 可在元素上使用 ngModel</span></span><br><span class="line"><span class="comment"> * @export</span></span><br><span class="line"><span class="comment"> * @class ElementCanEditDirective</span></span><br><span class="line"><span class="comment"> * @implements &#123;ControlValueAccessor&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[appCanEdit]'</span>,</span><br><span class="line">  providers: [</span><br><span class="line">    &#123;</span><br><span class="line">      provide: NG_VALUE_ACCESSOR,</span><br><span class="line">      useExisting: forwardRef(<span class="function"><span class="params">()</span> =&gt;</span> ElementCanEditDirective),</span><br><span class="line">      multi: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ElementCanEditDirective <span class="keyword">implements</span> ControlValueAccessor &#123;</span><br><span class="line"></span><br><span class="line">  _value;</span><br><span class="line">  <span class="comment">// callback function</span></span><br><span class="line">  propagateChange = <span class="function">(<span class="params">value: <span class="built_in">any</span></span>) =&gt;</span> &#123; &#125;;</span><br><span class="line">  <span class="comment">// Writes a new value to the element ，temporarily store the value in  '_value'</span></span><br><span class="line">  writeValue(value: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (value) &#123;</span><br><span class="line">      <span class="keyword">this</span>._value = value;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// when the control's value changes in the UI, call the callback function</span></span><br><span class="line">  registerOnChange(fn: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.propagateChange = fn;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  registerOnTouched(fn: <span class="built_in">any</span>) &#123; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostBinding</span>() <span class="keyword">get</span> innerText() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>._value;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'blur'</span>, [<span class="string">'$event.target'</span>])</span><br><span class="line">  onBlur(ele: HTMLElement) &#123;</span><br><span class="line">    ele.contentEditable = <span class="string">'false'</span>;</span><br><span class="line">    <span class="keyword">this</span>._value = ele.innerText;</span><br><span class="line">    <span class="keyword">this</span>.propagateChange(<span class="keyword">this</span>._value);</span><br><span class="line">    <span class="keyword">this</span>.render.removeClass(ele, <span class="string">'content-editable'</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@HostListener</span>(<span class="string">'dblclick'</span>, [<span class="string">'$event.target'</span>])</span><br><span class="line">  dbClick(ele: HTMLElement) &#123;</span><br><span class="line">    ele.contentEditable = <span class="string">'true'</span>;</span><br><span class="line">    ele.innerText = ele.innerText;</span><br><span class="line">    ele.focus();</span><br><span class="line">    <span class="keyword">this</span>.render.addClass(ele, <span class="string">'content-editable'</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> render: Renderer2</span></span><br><span class="line"><span class="params">  </span>) &#123; &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
           
@@ -1069,8 +1271,8 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:22:13+08:00">
-                2018-08-31
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T15:36:54+08:00">
+                2018-09-19
               </time>
             
           </span>
@@ -1097,7 +1299,7 @@ yield 关键字用来暂停和恢复一个生成器函数
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  307
+                  341
                 </span>
               
 
@@ -1136,11 +1338,11 @@ yield 关键字用来暂停和恢复一个生成器函数
       
         
           
-            <blockquote>
-<p>以下只是个人使用过程中的的一些感受,具体二者之间的差别参考 <a href="https://angular.cn/guide/ajs-quick-reference" target="_blank" rel="noopener">官方文档</a> </p>
-</blockquote>
-<ol>
-<li><p>Typescript es6超集 , 支持 import export ,不需额外引入模块加载器</p>
+            <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><pre><code>关于AngularJs、Angular 一脉相承的思路与不同之处
+
+以下只是个人使用过程中的的一些感受,具体二者之间的差别参考 [官方文档](https://angular.cn/guide/ajs-quick-reference) 
+</code></pre><h3 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h3><ol>
+<li><p>引入脚手架，提供Typescript es6超集 , 支持 import export ,不需额外引入模块加载器</p>
 </li>
 <li><p>将组件和指令二者剥离开来，前者组成页面，后者分为结构性指令和功能性指令, 不再支持replace等</p>
 </li>
@@ -1241,7 +1443,7 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1254,7 +1456,7 @@ yield 关键字用来暂停和恢复一个生成器函数
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -1321,7 +1523,7 @@ yield 关键字用来暂停和恢复一个生成器函数
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">3.7k</span>
+    <span title="Site words total count">5.0k</span>
   
 </div>
 

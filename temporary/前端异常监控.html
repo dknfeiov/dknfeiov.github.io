@@ -79,13 +79,17 @@
 
 
 
+<meta name="description" content="a. http://www.cnblogs.com/fsjohnhuang/p/7685144.html  前端魔法堂——异常不仅仅是try/catchb.   前端异常，导致不会导致js引擎崩溃，但可能让当前执行的任务终止  所有异常类 继承自 Error ，标准方法、属性如下 @prop {String} name - 异常名称 @prop {String} message - 供人类阅读的异">
 <meta property="og:type" content="website">
 <meta property="og:title" content="HeRunBin&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/archives/2017/index.html">
+<meta property="og:url" content="http://yoursite.com/temporary/前端异常监控.html">
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
+<meta property="og:description" content="a. http://www.cnblogs.com/fsjohnhuang/p/7685144.html  前端魔法堂——异常不仅仅是try/catchb.   前端异常，导致不会导致js引擎崩溃，但可能让当前执行的任务终止  所有异常类 继承自 Error ，标准方法、属性如下 @prop {String} name - 异常名称 @prop {String} message - 供人类阅读的异">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-10T10:10:17.364Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HeRunBin&#39;s blog">
+<meta name="twitter:description" content="a. http://www.cnblogs.com/fsjohnhuang/p/7685144.html  前端魔法堂——异常不仅仅是try/catchb.   前端异常，导致不会导致js引擎崩溃，但可能让当前执行的任务终止  所有异常类 继承自 Error ，标准方法、属性如下 @prop {String} name - 异常名称 @prop {String} message - 供人类阅读的异">
 
 
 
@@ -115,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2017/"/>
+  <link rel="canonical" href="http://yoursite.com/temporary/前端异常监控.html"/>
 
 
 
 
 
-  <title>归档 | HeRunBin's blog</title>
+  <title> | HeRunBin's blog</title>
   
 
 
@@ -140,7 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -248,74 +252,88 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
+    
+    
+    <div class="post-block page">
+      <header class="post-header">
 
-      <span class="archive-page-counter">
-        
-        
-        
-          
-        
-        嗯..! 目前共计 6 篇日志。 继续努力。
-      </span>
+	<h1 class="post-title" itemprop="name headline"></h1>
+
+
+
+</header>
 
       
+      
+      
+      <div class="post-body">
+        
+        
+          <p>a. <a href="http://www.cnblogs.com/fsjohnhuang/p/7685144.html" target="_blank" rel="noopener">http://www.cnblogs.com/fsjohnhuang/p/7685144.html</a>  前端魔法堂——异常不仅仅是try/catch<br>b. </p>
+<ol>
+<li><p>前端异常，导致不会导致js引擎崩溃，但可能让当前执行的任务终止</p>
+</li>
+<li><p>所有异常类 继承自 Error ，标准方法、属性如下<br> @prop {String} name - 异常名称<br> @prop {String} message - 供人类阅读的异常信息<br> @prop {Function} constructor - 类型构造器<br> @method toString():String - 输出异常信息</p>
+</li>
+<li><p>异常，浏览器实现的其他属性<br>@prop {String} fileName - 异常发生的脚本URI<br>@prop {number} lineNumber - 异常发生的行号<br>@prop {number} columnNumber - 异常发生的列号<br>@prop {String} stack - 异常发生时的调用栈信息，IE10及以上才支持<br>@method toSource():String - 异常发生的脚本内容</p>
+</li>
+<li><p>异常类型，常见如<br> ReferenceError，当引用未声明的变量时发生<br> SyntaxError，解析时发生语法错误<br> TypeError，当值不是所期待的类型时，常见于对象属性方法调用，null.f()也报这个错<br> URIError，当传递一个非法的URI给全局URI处理函数时发生，如decodeURIComponent(‘%’)，即decodeURIComponent，decodeURI,encodeURIComponent，encodeURI</p>
+</li>
+</ol>
+<ol start="5">
+<li><p>自定义异常类型</p>
+<p> function MyError(message, fileName, lineNumber){<br> if (this instanceof MyError);else return new MyError(message, fileName, lineNumber)</p>
+<pre><code>this.message = message || &quot;&quot;
+if (fileName){ this.fileName = fileName }
+if (lineNumber){ this.lineNumber = lineNumber }
+</code></pre><p> }</p>
+<p> var proto = MyError.prototype = Object.create(Error.prototype)<br> proto.name = “MyError”<br> proto.constructor = MyError</p>
+</li>
+</ol>
+<ol start="6">
+<li><p>同步代码，运行时异常捕捉 =&gt; try - catch<br> a. “同步代码”就是说无法获取如setTimeout、Promise等异步代码的异常，也就是说try/catch仅能捕获当前任务的异常，setTimeout等异步代码是在下一个EventLoop中执行<br> b. “运行时异常”是指非SyntaxError，也就是语法错误是无法捕获的，因为在解析JavaScript源码时就已经报错<br> c. throw 可以跑出任意类型的数据，但最好抛出Error或其子类的实例，因为异常发生时提供信息越全越好，越容易追踪定位重现问题</p>
+</li>
+<li><p>window.onerror =&gt; Javascript 顶层异常处理入口，通过它除了try/catch能捕获的异常外，还可以捕获setTimeout等的异步代码异常、语法错误， 函数如参如下<br> @description window.onerror处理函数<br> @param {string} message - 异常信息”<br> @param {string} source  - 发生异常的脚本的URI<br> @param {number} lineno  - 发生异常的脚本行号<br> @param {number} colno   - 发生异常的脚本列号<br> @param {?Error} error   - Error实例，Safari和IE10中没有这个实参</p>
+<p> @DESC ： 只有onerror函数返回true时，异常才不会继续向上抛</p>
+</li>
+<li><p>onerror 无法捕获所有异常</p>
+<ol>
+<li>Chrome中对于跨域脚本所报的异常，虽然onerror能够捕获，但统一报Script Error。若要得到正确的错误信息，则要配置跨域资源共享CORS才可以。</li>
+<li>window.onerror实际上采用的事件冒泡的机制捕获异常，并且在冒泡(bubble)阶段时才触发，因此像网络请求异常这些不会冒泡的异常是无法捕获的。</li>
+<li>Promise.reject产生的未被catch的异常，window.onerror也是无能为力。</li>
+</ol>
+</li>
+<li><p>Promise 异常捕获<br> a. Promise实例的初始化状态是pending，而发生异常时则为rejected，而导致状态从pending转变为rejected的操作有</p>
+<pre><code>调用Promise.reject类方法
+在工厂方法中调用reject方法
+在工厂方法或then回调函数中抛异常
+
+当Promise实例从pending转变为rejected时，和之前谈论到异常一样，要么被捕获处理，要么继续抛出直到成为Uncaught(in promise) Error为止
+</code></pre></li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方式1</span></span><br><span class="line"><span class="built_in">Promise</span>.reject(<span class="string">"anything you want"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式2</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123; reject(<span class="string">"anything you want"</span>) &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式3</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span></span>&#123; <span class="keyword">throw</span> <span class="string">"anything you want"</span> &#125;)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">r</span>) </span>&#123; r(<span class="built_in">Error</span>(<span class="string">"anything you want"</span> ) &#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123; <span class="keyword">throw</span> e &#125;)</span><br></pre></td></tr></table></figure>
+<pre><code>b. 通过 new Promise(function() {}).catch(function(e){}) 捕捉错误
+c. 通过window的unhandledrejection事件捕获异常（专属于Promise的顶层异常处理）
+</code></pre><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">"unhandledrejection"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// Event新增属性</span></span><br><span class="line">    <span class="comment">// @prop &#123;Promise&#125; promise - 状态为rejected的Promise实例</span></span><br><span class="line">    <span class="comment">// @prop &#123;String|Object&#125; reason - 异常信息或rejected的内容</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 会阻止异常继续抛出，不让Uncaught(in promise) Error产生</span></span><br><span class="line">    e.preventDefault()</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<ol start="10">
+<li>404 等网络请求如何监控 </li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">"error"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;   <span class="comment">// ????</span></span><br><span class="line">    <span class="comment">// Do something</span></span><br><span class="line">    <span class="built_in">console</span>.log(e.bubbles) <span class="comment">// 回显false</span></span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+<p>跨域错误</p>
+<p>iframe 错误监控</p>
 
         
-        
-        
-
-        
-          
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2017">2017</h1>
-          </div>
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/10/28/AngularJs到Angular的变化/" itemprop="url">
-              
-                <span itemprop="name">AngularJs到Angular的变化</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-10-28T11:28:58+08:00"
-              content="2017-10-28" >
-          10-28
-        </time>
       </div>
-
-    </header>
-  </article>
-
-
-
       
-
+      
+      
     </div>
+    
+    
+    
   </div>
-  
-  
-  
-
-  
-
 
 
           </div>
@@ -323,6 +341,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -557,6 +579,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
