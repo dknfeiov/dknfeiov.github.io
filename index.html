@@ -310,7 +310,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T17:48:28+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T18:08:43+08:00">
                 2018-09-19
               </time>
             
@@ -386,11 +386,11 @@
 <li>有针对性的优化用户访问速度，找到用户访问慢的根源</li>
 <li>根据用户上报信息，对访问时段、访问频次、项目打开频次等数据做进一步的探索</li>
 </ol>
-<h3 id="二-大致步骤"><a href="#二-大致步骤" class="headerlink" title="二.大致步骤"></a>二.大致步骤</h3><h4 id="1-通过PerFormance对象获取性能信息"><a href="#1-通过PerFormance对象获取性能信息" class="headerlink" title="1. 通过PerFormance对象获取性能信息"></a>1. 通过PerFormance对象获取性能信息</h4><p>通过<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Performance" target="_blank" rel="noopener">perFormance</a>全局对象可以获取页面性能相关信息，目前兼容到IE10，已经可用<br><img src="https://dknfeiov.github.io/images/files/performance/performance.png" alt=""> </p>
+<h3 id="二-大致步骤"><a href="#二-大致步骤" class="headerlink" title="二.大致步骤"></a>二.大致步骤</h3><h4 id="1-通过PerFormance对象获取性能信息"><a href="#1-通过PerFormance对象获取性能信息" class="headerlink" title="1. 通过PerFormance对象获取性能信息"></a>1. 通过PerFormance对象获取性能信息</h4><p>通过<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Performance" target="_blank" rel="noopener">perFormance</a>全局对象可以获取页面性能相关信息，目前兼容到IE10，已经可用<br><img src="https://dknfeiov.github.io/images/files/performance/performance.PNG" alt=""> </p>
 <p>获取页面加载时间<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">performance.getEntriesByType(<span class="string">'navigation'</span>)</span><br><span class="line"></span><br><span class="line">通过name获取加载当前url , 根据domComplete获取页面加载耗（ms）</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://dknfeiov.github.io/images/files/performance/load.png" alt=""> </p>
+<p><img src="https://dknfeiov.github.io/images/files/performance/load.PNG" alt=""> </p>
 <p>获取超时资源列表<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">performance.getEntriesByType(<span class="string">'resource'</span>)</span><br><span class="line">    .filter(<span class="function"><span class="params">item</span> =&gt;</span> item.duration &gt;= <span class="number">5000</span>)  <span class="comment">// 找出加载时间超过5s 的资源</span></span><br><span class="line"><span class="comment">// initiatorType 类型</span></span><br><span class="line"><span class="comment">// name 名称</span></span><br><span class="line"><span class="comment">// duration 耗时</span></span><br></pre></td></tr></table></figure></p>
-<p><img src="https://dknfeiov.github.io/images/files/performance/resource.png" alt=""> </p>
+<p><img src="https://dknfeiov.github.io/images/files/performance/resource.PNG" alt=""> </p>
 <h4 id="2-页面加载完自动上报"><a href="#2-页面加载完自动上报" class="headerlink" title="2. 页面加载完自动上报"></a>2. 页面加载完自动上报</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">reportNavigate() &#123;</span><br><span class="line">    <span class="comment">// 后台上报</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 简略实现</span></span><br><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 尽量不影响页面主线程</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback) &#123;</span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        setTimeout(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="3-监控iframe加载"><a href="#3-监控iframe加载" class="headerlink" title="3. 监控iframe加载"></a>3. 监控iframe加载</h4><pre><code>通过传入iframe的window全局对象
 </code></pre><h3 id="三-完整代码"><a href="#三-完整代码" class="headerlink" title="三.完整代码"></a>三.完整代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 监控主项目，自动上报</span></span><br><span class="line"><span class="keyword">new</span> PerformanceMonitor(<span class="string">'main'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监控iframe子项目， 手动上报</span></span><br><span class="line"><span class="keyword">this</span>.monitor = <span class="keyword">new</span> PerformanceMonitor(<span class="string">'iframe'</span>, <span class="built_in">window</span>.frames[<span class="number">0</span>].window, <span class="literal">null</span>, <span class="literal">false</span>)</span><br><span class="line"><span class="comment">// jsx</span></span><br><span class="line">&lt;iframe onLoad=&#123;() =&gt; &#123;<span class="keyword">this</span>.monitor.reportNavigate()&#125;&#125;</span><br></pre></td></tr></table></figure>
@@ -977,7 +977,7 @@ yield 关键字用来暂停和恢复一个生成器函数
 <li><p>不可变性：因为数据单向流动，所有子组件从父级接收的数据是不可变的（@Input 、props），Angular如果要对@Input传递的数据进行处理，可以用set去实现</p>
 </li>
 <li><p>Angular使用模板语法，通过结构型指令如<em>ngIf、</em>ngFor 实现条件渲染、列表展示, React通过jsx语法实现同样的功能，如下</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> &amp;&amp; <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>、datas.map(i,v)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> &amp;&amp; &lt;div&gt;、datas.map(i,v)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Angular 表单提供二种方式，模板驱动与响应式表单，前者通过模板语法与指令实现，后者由模型驱动，预先定义字段、校验项、初始值，提供校验方法，React 表单一般通过受控组件的方式实现</p>
 </li>
@@ -1090,7 +1090,7 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T15:36:31+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T18:09:26+08:00">
                 2018-09-19
               </time>
             
