@@ -86,10 +86,12 @@
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
 <meta property="og:description" content="a. http://www.cnblogs.com/fsjohnhuang/p/7685144.html  前端魔法堂——异常不仅仅是try/catchb.   前端异常，导致不会导致js引擎崩溃，但可能让当前执行的任务终止  所有异常类 继承自 Error ，标准方法、属性如下 @prop {String} name - 异常名称 @prop {String} message - 供人类阅读的异">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-10T10:10:17.364Z">
+<meta property="og:image" content="http://dknfeiov.github.io/">
+<meta property="og:updated_time" content="2018-09-26T06:21:14.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HeRunBin&#39;s blog">
 <meta name="twitter:description" content="a. http://www.cnblogs.com/fsjohnhuang/p/7685144.html  前端魔法堂——异常不仅仅是try/catchb.   前端异常，导致不会导致js引擎崩溃，但可能让当前执行的任务终止  所有异常类 继承自 Error ，标准方法、属性如下 @prop {String} name - 异常名称 @prop {String} message - 供人类阅读的异">
+<meta name="twitter:image" content="http://dknfeiov.github.io/">
 
 
 
@@ -331,8 +333,25 @@ c. 通过window的unhandledrejection事件捕获异常（专属于Promise的顶�
 <li>404 等网络请求如何监控 </li>
 </ol>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">"error"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;   <span class="comment">// ????</span></span><br><span class="line">    <span class="comment">// Do something</span></span><br><span class="line">    <span class="built_in">console</span>.log(e.bubbles) <span class="comment">// 回显false</span></span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
-<p>跨域错误</p>
-<p>iframe 错误监控</p>
+<p>跨域错误 Script error 浏览器同源策略导致</p>
+<pre><code>1. iframe
+
+    同源： 根据 iframe onerror事件处理
+    非第三方: 通过iframe通信
+
+2. 将在资源放置在cdn导致的跨域问题
+
+    浏览器： &lt;script type=&quot;text/javascript&quot; src=&quot;https://og6593g2z.qnssl.com/scripterror.js&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+    后台设置： allow-origin: www.XXX.com
+</code></pre><p>JavaScript执行错误<br>资源加载错误  resourceError 404<br>HTTP请求错误  httpError<br>unhandledrejection，即未catch处理的Promise错误<br>WebSockect错误</p>
+<ol>
+<li>监控用户 点击，页面跳转，网络请求</li>
+<li>重写console对象监控浏览器控制台的打印信息</li>
+</ol>
+<p>window.onerror = function(errorMessage, scriptURI, lineNumber, columnNumber, error){<br>    console.log(errorMessage);<br>    console.log(scriptURI);<br>    console.log(lineNumber);<br>    console.log(columnNumber);<br>    console.log(error);<br>}</p>
+<p>js执行错误<br>{<br>    “notifierVersion”: “0.2.0”,<br>    “userAgent”: “Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0”,<br>    “locale”: “zh”,<br>    “url”: “<a href="http://localhost:4000&quot;" target="_blank" rel="noopener">http://localhost:4000&quot;</a>,<br>    “title”: “Test”,<br>    “apiKey”: “API-KEY”,<br>    “name”: “ReferenceError”,<br>    “time”: 1502863944724,<br>    “message”: “Uncaught ReferenceError: aler is not defined”,<br>    “fileName”: “<a href="http://localhost:4000/test.js&quot;" target="_blank" rel="noopener">http://localhost:4000/test.js&quot;</a>,<br>    “lineNumber”: 1,<br>    “columnNumber”: 1,<br>    “stacktrace”: “@<a href="http://localhost:4000/test.js:1:1\n&quot;" target="_blank" rel="noopener">http://localhost:4000/test.js:1:1\n&quot;</a>,<br>    “type”: “uncaught”,<br>    “severity”: “error”<br>}</p>
+<p>resourceError<br>{<br>    “notifierVersion”: “0.2.0”,<br>    “userAgent”: “Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0”,<br>    “locale”: “zh”,<br>    “url”: “<a href="https://www.fundebug.com&quot;" target="_blank" rel="noopener">https://www.fundebug.com&quot;</a>,<br>    “title”: “Test”,<br>    “apiKey”: “API-KEY”,<br>    “time”: 1502864167717,<br>    “type”: “resourceError”,<br>    “target”: {<br>        “outerHTML”: “<img src="\"test.jpg\"">“,<br>        “src”: “<a href="https://www.fundebug.com/test.jpg&quot;" target="_blank" rel="noopener">https://www.fundebug.com/test.jpg&quot;</a>,<br>        “tagName”: “IMG”,<br>        “id”: “”,<br>        “className”: “”,<br>        “name”: “jpg”,<br>        “XPath”: “/html/body/img[1]”,<br>        “selector”: “HTML &gt; BODY:nth-child(2) &gt; IMG:nth-child(2)”,<br>        “status”: 404,<br>        “statusText”: “Not Found”<br>    }<br>}</p>
+<p>httpError:<br>{<br>    “notifierVersion”: “0.2.0”,<br>    “userAgent”: “Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0”,<br>    “locale”: “zh”,<br>    “url”: “<a href="http://localhost:4000&quot;" target="_blank" rel="noopener">http://localhost:4000&quot;</a>,<br>    “title”: “Test”,<br>    “apiKey”: “API-KEY”,<br>    “time”: 1502864518516,<br>    “type”: “httpError”,<br>    “req”: {<br>        “method”: “POST”,<br>        “url”: “<a href="https://www.fundebug.com/login&quot;" target="_blank" rel="noopener">https://www.fundebug.com/login&quot;</a><br>    },<br>    “res”: {<br>        “status”: 403,<br>        “statusText”: “Forbidden”,<br>        “response”: “{\”error\”:\”wrong password\”}”<br>    }<br>}</p>
 
         
       </div>
@@ -395,7 +414,7 @@ c. 通过window的unhandledrejection事件捕获异常（专属于Promise的顶�
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -475,7 +494,7 @@ c. 通过window的unhandledrejection事件捕获异常（专属于Promise的顶�
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">5.0k</span>
+    <span title="Site words total count">6.1k</span>
   
 </div>
 

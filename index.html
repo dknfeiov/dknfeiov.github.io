@@ -273,6 +273,195 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dknfeiov.github.io/2018/10/06/nginx缓存302请求导致重定向循环/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="何润斌">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HeRunBin's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/06/nginx缓存302请求导致重定向循环/" itemprop="url">nginx缓存302请求导致重定向循环</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-06T17:23:53+08:00">
+                2018-10-06
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-11-06T20:21:50+08:00">
+                2018-11-06
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,076
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="一-概述"><a href="#一-概述" class="headerlink" title="一.概述"></a>一.概述</h3><blockquote>
+<p>前端遗留项目，将其嵌入新开发的门户网站中，作为子项目，嵌入之后发现访问速度很慢，平均加载耗时超过10s，性能分析之后，发现存在以下的问题：</p>
+</blockquote>
+<ol>
+<li>需要加载的静态资源多，差不多120多个，且大部分没有经过压缩</li>
+<li>原系统部署在内网，门户网站部署在阿里云，嵌入之后访问速度受到内外网带宽的影响，且访问相当于多了一次跳转</li>
+<li>每次ajax请求需要去sso（统一登录平台）校验是否登录，对性能也有一定的影响</li>
+</ol>
+<h3 id="二-详细"><a href="#二-详细" class="headerlink" title="二.详细"></a>二.详细</h3><h4 id="1-通过nginx配置加速网页访问"><a href="#1-通过nginx配置加速网页访问" class="headerlink" title="1. 通过nginx配置加速网页访问"></a>1. 通过nginx配置加速网页访问</h4><p>系统访问流程图如下：<br><img src="https://dknfeiov.github.io/images/files/nginx302/runFlow.PNG" alt=""> </p>
+<p>因为遗留项目为第三方系统，只提供了压缩包，无法修改项目源码，那就只能在nginx服务器和浏览器端进行优化</p>
+<p>采取措施如下： </p>
+<blockquote>
+<p>开启gzip压缩文件大小，浏览器静态资源缓存，开启nginx代理缓存</p>
+</blockquote>
+<p>nginx部分配置:<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line"> </span><br><span class="line">  # gzip压缩</span><br><span class="line">  gzip on;</span><br><span class="line">  gzip_min_length  <span class="number">5</span>k;</span><br><span class="line">  gzip_buffers     <span class="number">4</span> <span class="number">16</span>k;</span><br><span class="line">  gzip_comp_level <span class="number">3</span>;</span><br><span class="line">  gzip_types       text/plain application/javascript text/css application/xml text/javascript image/jpeg image/gif image/png;</span><br><span class="line">  gzip_vary on;</span><br><span class="line"></span><br><span class="line">  # proxy 缓存空间 声明 </span><br><span class="line">  proxy_cache_path proxy_cache_static levels=<span class="number">1</span>:<span class="number">2</span> keys_zone=cache_static:<span class="number">20</span>m;</span><br><span class="line"></span><br><span class="line">  # 请求头 判断缓存是否命中</span><br><span class="line">  add_header Nginx-Cache $upstream_cache_status;</span><br><span class="line"></span><br><span class="line">  server &#123;</span><br><span class="line"></span><br><span class="line">      listen       <span class="number">8080</span>;</span><br><span class="line">      server_name  <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>;</span><br><span class="line"></span><br><span class="line">      # 遗留项目 proxy 缓存</span><br><span class="line">      location /url &#123;</span><br><span class="line">          # 浏览器静态资源缓存</span><br><span class="line">          expires <span class="number">7</span>d;</span><br><span class="line">          proxy_cache cache_static;</span><br><span class="line">          # 缓存<span class="number">7</span>天</span><br><span class="line">          proxy_cache_valid  <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">302</span> <span class="number">7</span>d;</span><br><span class="line">          # 缓存唯一KEY值</span><br><span class="line">          proxy_cache_key $uri;</span><br><span class="line">          proxy_pass http://<span class="number">10.18</span><span class="number">.194</span><span class="number">.161</span>:<span class="number">7001</span>;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>经过如上配置，页面访问速度得到极大提升，访问速度控制在1s以内</p>
+<p><img src="https://dknfeiov.github.io/images/files/nginx302/visit.PNG" alt=""> </p>
+<h4 id="2-重定向循环问题出现"><a href="#2-重定向循环问题出现" class="headerlink" title="2. 重定向循环问题出现"></a>2. 重定向循环问题出现</h4><p>解决了访问速度的问题，不久业务部门又反馈了一个问题，登陆之后，隔段时间再操作，页面有时会一直闪烁，无法正常操作，经过chrome调试，发现是因为发生了302重定向循环，开始分析问题</p>
+<p>正常访问，命中nginx缓存（HIT），返回200：<br><img src="https://dknfeiov.github.io/images/files/nginx302/200-normal-nginx-cache.PNG" alt=""> </p>
+<p>重定向循环异常，返回302：<br><img src="https://dknfeiov.github.io/images/files/nginx302/redirectError.PNG" alt=""> </p>
+<p>查看异常详情，发现nginx缓存仍然命中（HIT），且返回302重定向到当前资源：<br><img src="https://dknfeiov.github.io/images/files/nginx302/redirectErrorDetail.PNG" alt=""> </p>
+<h4 id="3-问题发现及解决"><a href="#3-问题发现及解决" class="headerlink" title="3. 问题发现及解决"></a>3. 问题发现及解决</h4><p>我们从结果倒推，首先，查看请求头，请求头中的 Nginx-Cache 返回 HIT ,由此可知，我们的错误响应是由nignx返回的，而没有到达遗留项目，既然错误响应是由nginx缓存返回的，查看nginx缓存配置，发现我们的配置确实存在缓存302请求的可能<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxy_cache_valid  <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">302</span> <span class="number">7</span>d;</span><br></pre></td></tr></table></figure></p>
+<p>然后，就是要找到它是什么时候缓存了这个302重定向了，与后台同学一起，从前到后分析了请求的整个流程，最终定位问题出现在sso登录校验阶段，用户一段时间未操作，登录状态过期，导致静态资源请求触发302，并复现了问题</p>
+<p>首先，清空浏览器登陆信息，不访问登陆页面，而是先直接访问静态资源common.js，后台拦截请求，判断当前未登陆，跳转到sso单点登陆页面，登陆成功，sso重定向到之前访问的路径，也就是如下图<br><img src="https://dknfeiov.github.io/images/files/nginx302/errorRepeat.PNG" alt=""> </p>
+<p>而我们之前的问题也就很清楚了，浏览器请求静态资源common.js，请求经过nginx，到达遗留项目，遗留项目判断当前未登陆，跳转到sso登陆，登陆成功后返回302重定向到登陆之前的路径也就是common.js资源路径，返回又经nginx，nginx缓存了这个302返回，并将该响应返回到浏览器，浏览器根据302状态码，再次发起对common.js，nginx直接返回302，重定向循环就这么理所当然的发生了</p>
+<p>问题的分析，溯源花了很长的时候，解决问题只需稍微修改nginx配置即可，如下，去掉对302请求的缓存，世界终于平静了下来</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#before</span><br><span class="line">proxy_cache_valid  <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">302</span> <span class="number">7</span>d;</span><br><span class="line"></span><br><span class="line">#after</span><br><span class="line">proxy_cache_valid  <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">7</span>d;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://dknfeiov.github.io/2018/09/19/前端性能监控/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -405,172 +594,6 @@
 <h4 id="3-监控iframe加载"><a href="#3-监控iframe加载" class="headerlink" title="3. 监控iframe加载"></a>3. 监控iframe加载</h4><pre><code>通过传入iframe的window全局对象
 </code></pre><h3 id="三-完整代码"><a href="#三-完整代码" class="headerlink" title="三.完整代码"></a>三.完整代码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 监控主项目，自动上报</span></span><br><span class="line"><span class="keyword">new</span> PerformanceMonitor(<span class="string">'main'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监控iframe子项目， 手动上报</span></span><br><span class="line"><span class="keyword">this</span>.monitor = <span class="keyword">new</span> PerformanceMonitor(<span class="string">'iframe'</span>, <span class="built_in">window</span>.frames[<span class="number">0</span>].window, <span class="literal">null</span>, <span class="literal">false</span>)</span><br><span class="line"><span class="comment">// jsx</span></span><br><span class="line">&lt;iframe onLoad=&#123;() =&gt; &#123;<span class="keyword">this</span>.monitor.reportNavigate()&#125;&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 定义监控类</span></span><br><span class="line"><span class="keyword">import</span> &#123; report &#125; <span class="keyword">from</span> <span class="string">'../services/monitor'</span></span><br><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">PerformanceMonitor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    SECOND = <span class="number">1000</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *   origin 标示来源，当有多个日志源时</span></span><br><span class="line"><span class="comment">    *   $window 默认为window对象，iframe传入iframe的全局window对象</span></span><br><span class="line"><span class="comment">    *   timeout 超时时间判断</span></span><br><span class="line"><span class="comment">    *   auto 默认自动上报，若为false，需手动调用上报方法</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">constructor</span>(origin, $window, timeout, auto = true) &#123;</span><br><span class="line">        <span class="keyword">this</span>.origin = origin</span><br><span class="line">        <span class="keyword">this</span>.timeout = timeout || <span class="keyword">this</span>.SECOND * <span class="number">5</span></span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span> = $<span class="built_in">window</span> || <span class="built_in">window</span></span><br><span class="line">        <span class="keyword">this</span>.reportNavigate = <span class="keyword">this</span>.reportNavigate.bind(<span class="keyword">this</span>)</span><br><span class="line">        <span class="comment">// 自动上报</span></span><br><span class="line">        <span class="keyword">if</span> (auto) &#123;</span><br><span class="line">            <span class="keyword">this</span>.bindNavigate()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取页面加载时间</span></span><br><span class="line">    getLoadTime() &#123;</span><br><span class="line">        <span class="keyword">const</span> navigation = <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.getEntriesByType(<span class="string">'navigation'</span>)</span><br><span class="line">        <span class="keyword">if</span> (navigation &amp;&amp; navigation.length !== <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> navigation[<span class="number">0</span>].domComplete</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 兼容低版本Chrome</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.timing.domComplete - <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.timing.navigationStart</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取超时资源</span></span><br><span class="line">    getTimeoutRes() &#123;</span><br><span class="line">        <span class="comment">// initiatorType 类型</span></span><br><span class="line">        <span class="comment">// name 名称</span></span><br><span class="line">        <span class="comment">// duration 耗时</span></span><br><span class="line">        <span class="keyword">const</span> resourceTimes = <span class="keyword">this</span>.$<span class="built_in">window</span>.performance.getEntriesByType(<span class="string">'resource'</span>)</span><br><span class="line">        <span class="keyword">return</span> resourceTimes</span><br><span class="line">            .filter(<span class="function"><span class="params">item</span> =&gt;</span> item.duration &gt;= <span class="keyword">this</span>.timeout)</span><br><span class="line">            .map(<span class="function"><span class="params">res</span> =&gt;</span> (&#123;</span><br><span class="line">                TIMEOUTRES_TYPE: res.initiatorType || <span class="string">'null'</span>,</span><br><span class="line">                TIMEOUTRES_URL: res.name,</span><br><span class="line">                TIMEOUTRES_DATE: res.duration</span><br><span class="line">            &#125;))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前URl并解码</span></span><br><span class="line">    getUrl() &#123;</span><br><span class="line">        <span class="keyword">let</span> url</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            url = <span class="built_in">decodeURIComponent</span>(<span class="keyword">this</span>.$<span class="built_in">window</span>.location.href)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'url decode异常'</span>)</span><br><span class="line">            url = <span class="keyword">this</span>.$<span class="built_in">window</span>.location.href</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> url</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 页面加载完上报</span></span><br><span class="line">    reportNavigate() &#123;</span><br><span class="line">        <span class="keyword">const</span> domComplete = <span class="keyword">this</span>.getLoadTime()</span><br><span class="line">        <span class="keyword">const</span> timeoutRes = <span class="keyword">this</span>.getTimeoutRes()</span><br><span class="line">        <span class="keyword">const</span> url = <span class="keyword">this</span>.getUrl()</span><br><span class="line">        <span class="keyword">const</span> logData = &#123;</span><br><span class="line">            MONITOR_ORIGIN: <span class="keyword">this</span>.origin,</span><br><span class="line">            MONITOR_TYPE: <span class="string">'navigate'</span>,</span><br><span class="line">            MONITOR_URL: url,</span><br><span class="line">            MONITOR_TIMEOUT: <span class="keyword">this</span>.timeout,</span><br><span class="line">            MONITOR_TIMEOUTRES: timeoutRes,</span><br><span class="line">            MONITOR_LOADTIME: domComplete,</span><br><span class="line">            MONITOR_REPORTTIME: moment().format(<span class="string">'YYYY-MM-DD HH:mm:ss'</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.report(logData)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可以自定义上报信息</span></span><br><span class="line">    report(data) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            report(data)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'日志上报异常'</span>, error)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绑定事件、自动上报</span></span><br><span class="line">    bindNavigate() &#123;</span><br><span class="line">        <span class="keyword">const</span> oldOnload = <span class="keyword">this</span>.$<span class="built_in">window</span>.onload</span><br><span class="line">        <span class="keyword">this</span>.$<span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (oldOnload &amp;&amp; <span class="keyword">typeof</span> oldOnload === <span class="string">'function'</span>) &#123;</span><br><span class="line">                oldOnload(e)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 尽量不影响页面主线程</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback) &#123;</span><br><span class="line">                <span class="keyword">this</span>.$<span class="built_in">window</span>.requestIdleCallback(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                setTimeout(<span class="keyword">this</span>.reportNavigate)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.bind(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://dknfeiov.github.io/2018/08/30/DvaJS实现model复用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="何润斌">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="HeRunBin's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/30/DvaJS实现model复用/" itemprop="url">DvaJS model复用的方案</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T19:19:20+08:00">
-                2018-08-30
-              </time>
-            
-
-            
-              <span class="post-meta-divider">|</span>
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-check-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">更新于&#58;</span>
-              
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:22:13+08:00">
-                2018-08-31
-              </time>
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  427
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  2
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）"><a href="#Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）" class="headerlink" title="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）"></a><a href="https://dvajs.com/guide/getting-started.html#%E5%AE%9A%E4%B9%89-model" target="_blank" rel="noopener">Dva</a> 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）</h3><pre><code>前置知识: dva  =&gt;  一个基于 redux 和 redux-saga 的数据流方案
-         react =&gt; 高阶组件的定义
-</code></pre><h4 id="1-示例描述："><a href="#1-示例描述：" class="headerlink" title="1. 示例描述："></a>1. 示例描述：</h4><pre><code>多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用
-</code></pre><h4 id="2-示例代码："><a href="#2-示例代码：" class="headerlink" title="2. 示例代码："></a>2. 示例代码：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// router.js  </span></span><br><span class="line"><span class="comment">// 1. 动态加载 model 和 路由组件</span></span><br><span class="line">&#123;</span><br><span class="line">    path: <span class="string">'product'</span>,</span><br><span class="line">    getComponent(nextState, cb) &#123;</span><br><span class="line">        <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</span><br><span class="line">            <span class="comment">// 从location 中获取业务类型 type</span></span><br><span class="line">            <span class="keyword">const</span> type = nextState.location.query.type</span><br><span class="line">            <span class="comment">// 加载model并挂载到dva实例上  注意：require后接了()，因为返回的是一个函数，函数执行返回真正将被挂载的model对象</span></span><br><span class="line">            app.model(<span class="built_in">require</span>(<span class="string">'./models/product'</span>)(type))</span><br><span class="line">            <span class="comment">// 加载路由组件  require 返回的也是一个函数，函数执行返回一个React组件（高阶组件，在真正的路由组件上包了一层）</span></span><br><span class="line">            cb(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./routes/product'</span>)(type))</span><br><span class="line">        &#125;, <span class="string">'product'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// models/product.js  </span></span><br><span class="line"><span class="comment">// 2. 根据type 动态生成 model</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">modelGenerate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        namespace: <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span>,</span><br><span class="line">        state: &#123;</span><br><span class="line">            list: []</span><br><span class="line">        &#125;,</span><br><span class="line">        reducers: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        effects: &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// routes/product.jsx  </span></span><br><span class="line"><span class="comment">// 3. 根据type 动态返回 新的React组件（对业务组件进行包装）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">routeGenarate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据type找到命名空间</span></span><br><span class="line">    <span class="keyword">const</span> namespace = <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ProductWrapper</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">            render() &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Products</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">            &#125;</span></span><br><span class="line"><span class="xml">        &#125;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">    // 根据 namespace(命名空间) 从redux store 获取对应的model实例数据 ，并命名为 productModel</span></span><br><span class="line"><span class="xml">    return connect(store =&gt; (&#123; productModel: store[namespace] &#125;))(ProductWrapper())</span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">// 业务组件 从 props.productModel 获取数据</span></span><br><span class="line"><span class="xml">const Products = (&#123; dispatch, productModel &#125;) =&gt; &#123;</span></span><br><span class="line"><span class="xml">    return (</span></span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ProductList list=&#123;productModel.list&#125; /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
           
         
@@ -775,6 +798,172 @@ yield 关键字用来暂停和恢复一个生成器函数
 </li>
 </ol>
 <h3 id="三-Generator-结合-async-await"><a href="#三-Generator-结合-async-await" class="headerlink" title="三. Generator 结合 async/await"></a>三. Generator 结合 async/await</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟发起请求，获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getData</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">        data = <span class="string">`MOCK DATA <span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;</span>`</span></span><br><span class="line">        setTimeout(<span class="function"><span class="params">_</span> =&gt;</span> &#123;</span><br><span class="line">            resolve(data)</span><br><span class="line">        &#125;, <span class="number">2000</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 迭代器，调用next()请求最新数据</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span>* <span class="title">timerGenerator</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">yield</span> getData()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 业务代码，获取最新数据</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">execute</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> timer = timerGenerator()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:51 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:53 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:55 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> timer.next()) <span class="comment">// &#123;value: "MOCK DATA Thu Aug 30 2018 10:57:57 GMT+0800 (中国标准时间)", done: false&#125;</span></span><br><span class="line">&#125;</span><br><span class="line">execute()</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://dknfeiov.github.io/2018/08/30/DvaJS实现model复用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="何润斌">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HeRunBin's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/30/DvaJS实现model复用/" itemprop="url">DvaJS model复用的方案</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T19:19:20+08:00">
+                2018-08-30
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-31T19:22:13+08:00">
+                2018-08-31
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  427
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  2
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）"><a href="#Dva-下-model-复用-（一个model同时对应多个业务模块，业务模块间数据互不影响）" class="headerlink" title="Dva 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）"></a><a href="https://dvajs.com/guide/getting-started.html#%E5%AE%9A%E4%B9%89-model" target="_blank" rel="noopener">Dva</a> 下 model 复用 （一个model同时对应多个业务模块，业务模块间数据互不影响）</h3><pre><code>前置知识: dva  =&gt;  一个基于 redux 和 redux-saga 的数据流方案
+         react =&gt; 高阶组件的定义
+</code></pre><h4 id="1-示例描述："><a href="#1-示例描述：" class="headerlink" title="1. 示例描述："></a>1. 示例描述：</h4><pre><code>多Tab结构， 存在A、B、C 业务模块，数据不同，业务逻辑一致，希望实现代码复用
+</code></pre><h4 id="2-示例代码："><a href="#2-示例代码：" class="headerlink" title="2. 示例代码："></a>2. 示例代码：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// router.js  </span></span><br><span class="line"><span class="comment">// 1. 动态加载 model 和 路由组件</span></span><br><span class="line">&#123;</span><br><span class="line">    path: <span class="string">'product'</span>,</span><br><span class="line">    getComponent(nextState, cb) &#123;</span><br><span class="line">        <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</span><br><span class="line">            <span class="comment">// 从location 中获取业务类型 type</span></span><br><span class="line">            <span class="keyword">const</span> type = nextState.location.query.type</span><br><span class="line">            <span class="comment">// 加载model并挂载到dva实例上  注意：require后接了()，因为返回的是一个函数，函数执行返回真正将被挂载的model对象</span></span><br><span class="line">            app.model(<span class="built_in">require</span>(<span class="string">'./models/product'</span>)(type))</span><br><span class="line">            <span class="comment">// 加载路由组件  require 返回的也是一个函数，函数执行返回一个React组件（高阶组件，在真正的路由组件上包了一层）</span></span><br><span class="line">            cb(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./routes/product'</span>)(type))</span><br><span class="line">        &#125;, <span class="string">'product'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// models/product.js  </span></span><br><span class="line"><span class="comment">// 2. 根据type 动态生成 model</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">modelGenerate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        namespace: <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span>,</span><br><span class="line">        state: &#123;</span><br><span class="line">            list: []</span><br><span class="line">        &#125;,</span><br><span class="line">        reducers: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        effects: &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// routes/product.jsx  </span></span><br><span class="line"><span class="comment">// 3. 根据type 动态返回 新的React组件（对业务组件进行包装）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">routeGenarate</span>(<span class="params">type</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据type找到命名空间</span></span><br><span class="line">    <span class="keyword">const</span> namespace = <span class="string">`products<span class="subst">$&#123;type&#125;</span>`</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ProductWrapper</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">            render() &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Products</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">            &#125;</span></span><br><span class="line"><span class="xml">        &#125;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">    // 根据 namespace(命名空间) 从redux store 获取对应的model实例数据 ，并命名为 productModel</span></span><br><span class="line"><span class="xml">    return connect(store =&gt; (&#123; productModel: store[namespace] &#125;))(ProductWrapper())</span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">// 业务组件 从 props.productModel 获取数据</span></span><br><span class="line"><span class="xml">const Products = (&#123; dispatch, productModel &#125;) =&gt; &#123;</span></span><br><span class="line"><span class="xml">    return (</span></span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;ProductList list=&#123;productModel.list&#125; /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
           
         
@@ -1100,8 +1289,8 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-09-19T18:09:26+08:00">
-                2018-09-19
+              <time title="更新于" itemprop="dateModified" datetime="2018-09-26T09:50:49+08:00">
+                2018-09-26
               </time>
             
           </span>
@@ -1167,7 +1356,7 @@ yield 关键字用来暂停和恢复一个生成器函数
       
         
           
-            <h3 id="一-概述"><a href="#一-概述" class="headerlink" title="一.概述"></a>一.概述</h3><pre><code>如果希望实现一个DOM元素，双击可编辑，失去焦点不可编辑，常用的方式，是绑定dbclick事件，当事件触发，将文本内容替换为表单元素，失去焦点，再替换为文本，这种做法固然简单，但如果要操作的dom元素太多，既要添加表单元素，还要监听dbclick、blur事件，代码不可避免会变得非常繁琐
+            <h3 id="一-概述"><a href="#一-概述" class="headerlink" title="一.概述"></a>一.概述</h3><pre><code>如果希望实现一个DOM元素，双击可编辑，失去焦点不可编辑，常用的方式，是绑定dblclick事件，当事件触发，将文本内容替换为表单元素，失去焦点，再替换为文本，这种做法固然简单，但如果要操作的dom元素太多，既要添加表单元素，还要监听dblclick、blur事件，代码不可避免会变得非常繁琐
 
 所以我采取的做法是，抽象出一个指令，将指令注册为表单控件，实现双向绑定，结合DOM的contentEditable属性，只要在DOM元素上添加该指令即可具备该能力
 </code></pre><h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">appCanEdit</span> [(<span class="attr">ngModel</span>)]=<span class="string">"item.value"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -1450,7 +1639,7 @@ yield 关键字用来暂停和恢复一个生成器函数
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1530,7 +1719,7 @@ yield 关键字用来暂停和恢复一个生成器函数
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">5.0k</span>
+    <span title="Site words total count">6.1k</span>
   
 </div>
 
