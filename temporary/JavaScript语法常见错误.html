@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="function 定义简写 没有arguments 内部 this 指向方法被定义的地方 a. 普通函数，指向window b. 构造函数，指向返回的对象 c. 作为对象属性，指向对象本身  箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之 更简短的函数并且不绑定this。 Map 浏览器兼容性好 Map 对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。 S">
+<meta name="description" content="function 定义简写 没有arguments 内部 this 指向方法被定义的地方 a. 普通函数，指向window b. 构造函数，指向返回的对象 c. 作为对象属性，指向对象本身  箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之 更简短的函数并且不绑定this。 箭头函数不会创建自己的this,它只会从自己的作用域链的上一层继承this 箭头函数this为父作用域的">
 <meta property="og:type" content="website">
 <meta property="og:title" content="HeRunBin&#39;s blog">
 <meta property="og:url" content="http://dknfeiov.github.io/temporary/JavaScript语法常见错误.html">
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
-<meta property="og:description" content="function 定义简写 没有arguments 内部 this 指向方法被定义的地方 a. 普通函数，指向window b. 构造函数，指向返回的对象 c. 作为对象属性，指向对象本身  箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之 更简短的函数并且不绑定this。 Map 浏览器兼容性好 Map 对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。 S">
+<meta property="og:description" content="function 定义简写 没有arguments 内部 this 指向方法被定义的地方 a. 普通函数，指向window b. 构造函数，指向返回的对象 c. 作为对象属性，指向对象本身  箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之 更简短的函数并且不绑定this。 箭头函数不会创建自己的this,它只会从自己的作用域链的上一层继承this 箭头函数this为父作用域的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-29T07:27:56.581Z">
+<meta property="og:updated_time" content="2018-11-16T08:40:32.603Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HeRunBin&#39;s blog">
-<meta name="twitter:description" content="function 定义简写 没有arguments 内部 this 指向方法被定义的地方 a. 普通函数，指向window b. 构造函数，指向返回的对象 c. 作为对象属性，指向对象本身  箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之 更简短的函数并且不绑定this。 Map 浏览器兼容性好 Map 对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。 S">
+<meta name="twitter:description" content="function 定义简写 没有arguments 内部 this 指向方法被定义的地方 a. 普通函数，指向window b. 构造函数，指向返回的对象 c. 作为对象属性，指向对象本身  箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之 更简短的函数并且不绑定this。 箭头函数不会创建自己的this,它只会从自己的作用域链的上一层继承this 箭头函数this为父作用域的">
 
 
 
@@ -288,6 +288,8 @@
 </ol>
 <p>箭头函数不绑定自身的 this，而允许局部作用域的方案来沿袭处理之</p>
 <p>更简短的函数并且不绑定this。</p>
+<p>箭头函数不会创建自己的this,它只会从自己的作用域链的上一层继承this</p>
+<p>箭头函数this为父作用域的this，不是调用时的this</p>
 <p>Map 浏览器兼容性好</p>
 <p>Map 对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。</p>
 <p>String.replace() 一次只替换一个 要加/g 才能替换所有  ？</p>
@@ -310,6 +312,8 @@
 所有以 symbol 为属性键的属性都会被完全忽略掉
 </code></pre><p>Object.keys() 方法会返回一个由一个给定对象的自身可枚举属性组成的数组,数组中属性名的排列顺序和使用 for…in 循环遍历该对象时返回的顺序一致<br>    {不包含原型中的可枚举属性}</p>
 <p>for…in<br>    for…in语句以任意顺序遍历一个对象的可枚举属性。对于每个不同的属性，语句都会被执行。<br>    循环将遍历对象本身的所有可枚举属性，以及对象从其构造函数原型中继承的属性(注意：包括原型中的可枚举属性)</p>
+<p>Shadow DOM API的 ShadowRoot接口是一个DOM子树的根节点, 它与文档的主DOM树分开渲染。</p>
+<p>ShadowRoot.mode 只读<br>ShadowRoot 的模式:是 “open” 或者 “closed”.<br>将 ShadowRoot 的模式(mode) 设置为 “closed” 会让该 ShadowRoot 的内部实现无法被 JavaScript 访问及修改 — 也就是说将该实现不公开，例如，<video> 标签内部实现无法被 JavaScript 访问及修改。</video></p>
 
         
       </div>
@@ -372,7 +376,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -385,7 +389,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
@@ -452,7 +456,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">6.1k</span>
+    <span title="Site words total count">7.1k</span>
   
 </div>
 
