@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="HeRunBin&#39;s blog">
 <meta property="og:description" content="1. 诞生的背景IndexedDB 是一种在用户浏览器中持久存储数据的方法。它允许您不考虑网络可用性，创建具有丰富查询能力的可离线 Web 应用程序。IndexedDB 对于存储大量数据的应用程序（例如借阅库中的 DVD 目录）和不需要持久 Internet 连接的应用程序（例如邮件客户端、待办事项列表或记事本）很有用 随着浏览器的处理能力不断增强，越来越多的网站开始考虑，将大量数据储存在客户端，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-31T09:17:39.239Z">
+<meta property="og:updated_time" content="2019-05-15T03:23:24.291Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HeRunBin&#39;s blog">
 <meta name="twitter:description" content="1. 诞生的背景IndexedDB 是一种在用户浏览器中持久存储数据的方法。它允许您不考虑网络可用性，创建具有丰富查询能力的可离线 Web 应用程序。IndexedDB 对于存储大量数据的应用程序（例如借阅库中的 DVD 目录）和不需要持久 Internet 连接的应用程序（例如邮件客户端、待办事项列表或记事本）很有用 随着浏览器的处理能力不断增强，越来越多的网站开始考虑，将大量数据储存在客户端，">
@@ -339,9 +339,15 @@
 <p>count()</p>
 <p>问题</p>
 <ol>
-<li><p>indexDB 将数据存储在硬盘，网页关闭后，数据是否随之销毁？ IndexedDB 是持久的，已经写入硬盘 </p>
+<li><p>indexDB 将数据存储在硬盘，网页关闭后，数据是否随之销毁？ </p>
+<blockquote>
+<p>IndexedDB 是持久的，已经写入硬盘 </p>
+</blockquote>
 </li>
 <li><p>open 数据库名相同、版本增加，如何处理？</p>
+<blockquote>
+<p>触发</p>
+</blockquote>
 </li>
 <li><p>blocked 事件，event 值, 如何处理</p>
 </li>
@@ -353,15 +359,22 @@
 </blockquote>
 </li>
 <li><p>是否提供批量插入数据的功能，单挑插入性能方面存在不足, 耗时过久事务是否会被浏览器中断</p>
+<blockquote>
+<p>indexDB 暂未提供批量插入数据的能力，只能单条插入，数据过大时，最好闲时分批处理，避免阻碍渲染，</p>
+</blockquote>
 </li>
-<li><p>数据库与后台同步时，如果不使用增量更新，需要将数据库清空再重新导入数据，如何高效的destroy  store.clear()</p>
+<li><p>数据库与后台同步时，如果不使用增量更新，需要将数据库清空再重新导入数据，如何高效的destroy  </p>
+<blockquote>
+<p>store.clear()</p>
+</blockquote>
 </li>
-</ol>
-<ol start="8">
-<li>openKeyCursor 支持范围么？sure <a href="https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange" target="_blank" rel="noopener">IDBKeyRange</a>  supported</li>
-</ol>
-<ol start="9">
-<li>Chrome 支持 persistent 持久存储 indexDB么？， 默认的存储方式是什么  <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/IndexedDB_API/Browser_storage_limits_and_eviction_criteria" target="_blank" rel="noopener">storage</a></li>
+<li><p>openKeyCursor 支持范围么？</p>
+<blockquote>
+<p>supported <a href="https://developer.mozilla.org/en-US/docs/Web/API/IDBKeyRange" target="_blank" rel="noopener">IDBKeyRange</a>  </p>
+</blockquote>
+</li>
+<li><p>Chrome 支持 persistent 持久存储 indexDB么？， 默认的存储方式是什么  <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/IndexedDB_API/Browser_storage_limits_and_eviction_criteria" target="_blank" rel="noopener">storage</a></p>
+</li>
 </ol>
 <p>默认是临时存储，持久存储需要用户授权</p>
 <ol start="10">
@@ -447,7 +460,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -543,7 +556,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">10.3k</span>
+    <span title="Site words total count">11.8k</span>
   
 </div>
 
